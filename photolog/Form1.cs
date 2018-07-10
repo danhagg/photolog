@@ -5,14 +5,11 @@ using System.IO;
 using Word = Microsoft.Office.Interop.Word;
 using Microsoft.Office.Interop.Word;
 using System.Reflection;
-using System.Diagnostics;
 using System.Data;
 using System.Xml.Linq;
 using System.Drawing.Imaging;
 using System.Text;
 using System.Linq;
-using System.Collections;
-using System.Deployment.Application;
 
 namespace photolog
 {
@@ -40,56 +37,134 @@ namespace photolog
         private void Form1_Load(object sender, EventArgs e)
         {
             this.Load += new EventHandler(Form1_Load);
-
+            
+            // form resizing
             // Turn off form resizing and maximize
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
 
-            //// DataGridView0
-            //dataGridView0.RowTemplate.Height = 64;
-            //dataGridView0.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            //dataGridView0.AllowUserToAddRows = false;
-            //dataGridView0.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-            //dataGridView0.Columns[1].DefaultCellStyle.Font = new System.Drawing.Font("Verdana", 6F, FontStyle.Bold);
-            //dataGridView0.GridColor = SystemColors.ActiveBorder;
-            //dataGridView0.MultiSelect = false;
-            //dataGridView0.AllowDrop = true;
-
-
-
-            //// Here we attach an event handler to the cell painting event
-            //dataGridView0.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView0_CellPainting);
-            dataGridView1.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView1_CellPainting);
-
-            // DataGridView1
-            dataGridView1.RowTemplate.Height = 100;
+            // dataGridView1
+            dataGridView1.RowTemplate.Height = 64;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.Columns["Caption"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.TopLeft;
             dataGridView1.AllowDrop = true;
-            
-
             //dataGridView1.MultiSelect = true;
             dataGridView1.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             dataGridView1.Columns[1].DefaultCellStyle.Font = new System.Drawing.Font("Verdana", 12F, FontStyle.Bold);
-            dataGridView1.Columns[2].DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 12F);
+            dataGridView1.Columns[2].DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            //dataGridView1.Columns[2].SpellCheck.IsEnabled = true;
             dataGridView1.DefaultCellStyle.SelectionBackColor = Color.Blue;
-            //dataGridView1.DefaultCellStyle.SelectionForeColor = Color.Blue;
+            dataGridView1.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView1_CellPainting);
 
+
+            // pictureBox1
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 
+
+            // photolog version
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Console.WriteLine(version);
-
+            label5.Text = "Version: " + version;
         }
 
 
-        //void GridView_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
-        //{
-        //    this.dataGridView1.Rows[e.RowIndex].Cells[0].Value
-        //     = (e.RowIndex + 1).ToString();
-        //}
+        /*
+         MENU OPTIONS
+         */
 
+
+        // MENU - Save as
+        private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DataSet dS = new DataSet();
+            //System.Data.DataTable dT1 = GetDataTableFromDGV0(dataGridView0);
+            System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
+
+            //dS.Tables.Add(dT1);
+            dS.Tables.Add(dT2);
+
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
+            saveFileDialog.Title = "Save work as .XML file";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
+            }
+        }
+
+
+        // MENU - Save
+
+
+
+        // MENU - Resume
+        private void resumeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //FolderBrowserDialog fbd = new FolderBrowserDialog();
+            //fbd.Description = "Choose an your photolog .XML file";
+
+            OpenFileDialog ofd = new OpenFileDialog();
+
+
+            ofd.Filter = "XML Files (*.xml)|*.xml";
+            ofd.FilterIndex = 1;
+            //ofd.Multiselect = false;
+
+            // check user selects pass
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                string xmlFileName = ofd.FileName;
+
+                Console.WriteLine(xmlFileName);
+
+                XDocument doc = XDocument.Load(xmlFileName);
+                //Console.WriteLine(doc);
+                /*
+                foreach (var dm1 in doc.Descendants("Table1"))
+                {
+                    string fileName = dm1.Element("fileName").Value; ;
+                    Image img = Image.FromFile(dm1.Element("dataGridView0Path").Value.ToString());
+                    var pth = dm1.Element("dataGridView0Path").Value;
+                    dataGridView0.Rows.Add(fileName, img, "", pth);
+                }
+                */
+                try
+                {
+                    foreach (var dm2 in doc.Descendants("Table1"))
+                    {
+                        string fileName = dm2.Element("fileName").Value;
+                        string fileNameFull = dm2.Element("dataGridView1Path").Value.ToString();
+                        Image img = Image.FromFile(dm2.Element("dataGridView1Path").Value.ToString());
+                        var capt = dm2.Element("dataGridView1Caption").Value;
+                        var pth = dm2.Element("dataGridView1Path").Value;
+                        dataGridView1.Rows.Add(fileName, img, capt, pth);
+                    }
+                    dgLength();
+                }
+                catch (Exception exc)
+                {
+                    StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
+                    myStringBuilder.Append(xmlFileName + "\n\n");
+                    myStringBuilder.Append("The saved project tried to load the following file: \n\n");
+                    myStringBuilder.Append(exc.Message + "\n\n");
+                    myStringBuilder.Append("But this file does not exist in this folder location. Have you perhaps moved it? Or has it been renamed? \n\n");
+                    MessageBox.Show(myStringBuilder.ToString());
+                }
+            }
+            dgLength();
+            capLength();
+            fileSize();
+            fileSizeTotal();
+        }
+
+
+        // MENU - Change My parent folder
+
+
+
+        // Paint the 
         private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             using (SolidBrush b = new SolidBrush(dataGridView1.RowHeadersDefaultCellStyle.ForeColor))
@@ -100,31 +175,55 @@ namespace photolog
 
 
 
+        // Caption Cell click = update caption length
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView1.CurrentCell.ColumnIndex.Equals(2) && e.RowIndex != -1)
+            {
+                if (dataGridView1.CurrentCell != null && dataGridView1.CurrentCell.Value != null)
+                    capLength();
+            }
 
-        // IMAGE CLICK - View larger image, dataGridView1
-        private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        }
+            
+        
+        // Image cell click = View larger image
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             String txt = dataGridView1.CurrentRow.Cells[3].Value.ToString();
             Console.WriteLine(txt);
             if (txt != null)
-            {
+            {             
+                Image img;
+                using (var bmpTemp = new Bitmap(txt))
+                {
+                    img = new Bitmap(bmpTemp);
+                    pictureBox1.Image = img;
+                    textBox4.Text = txt;
+                }
                 //Image newImage = Image.FromFile(txt);
                 //Process.Start(txt);
-                pictureBox1.Image = Image.FromFile(txt);
-                textBox4.Text = txt;
+                //pictureBox1.Image = Image.FromFile(txt);
+                //textBox4.Text = txt;
             }
             else
             {
                 MessageBox.Show("No Item is selected");
             }
+            capLength();
+            fileSize();
         }
+        
 
+        // BUTTON - Rotate Image
         private void button1_Click_2(object sender, EventArgs e)
         {
             RotateImage();
         }
 
 
+
+        // METHOD - Rotate Image
         public Image RotateImage()
         {
             //var bmp = new Bitmap(textBox4.Text);
@@ -135,9 +234,7 @@ namespace photolog
         }
 
 
-
-
-
+        // Save rotated Image
         private void button5_Click(object sender, EventArgs e)
         {
             var fd = new SaveFileDialog();
@@ -156,9 +253,7 @@ namespace photolog
                 if (System.IO.File.Exists(textBox4.Text))
                     System.IO.File.Delete(textBox4.Text);
 
-                pictureBox1.Image.Save(textBox4.Text, System.Drawing.Imaging.ImageFormat.Jpeg);
-
-
+                pictureBox1.Image.Save(fd.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
                 /*
                 switch (Path.GetExtension(fd.FileName))
                 {
@@ -182,18 +277,18 @@ namespace photolog
         //void Form1_DragDrop(object sender, DragEventArgs e)
         void dataGridView1_DragDrop(object sender, DragEventArgs e)
         {
+            // Make an array of all files being dragged in
             string[] fileNames = e.Data.GetData(DataFormats.FileDrop) as string[];
             if (fileNames != null && fileNames.Length != 0)
             {
-
+                // Make an array of all files in the dataGridView
                 var array0 = dataGridView1.Rows.Cast<DataGridViewRow>()
                                              .Select(x => x.Cells[3].Value.ToString().Trim()).ToArray();
 
-                //var array1 = dataGridView1.Rows.Cast<DataGridViewRow>()
-                //                             .Select(x => x.Cells[3].Value.ToString().Trim()).ToArray();
-
+                // Which files "collide"
                 var intersection = array0.Intersect(fileNames);
 
+                // If collisions exist
                 if (intersection.Count() > 0)
                 {
                     StringBuilder sb = new StringBuilder("The following file(s) are already in the list: \n");
@@ -205,34 +300,8 @@ namespace photolog
                     }
                     MessageBox.Show(sb.ToString());
                 }
-
-
-
-
-                /*
-                string fileNameFull = fileNames[0];
-
-                int pos0 = Array.IndexOf(array0, fileNameFull);
-                //int pos1 = Array.IndexOf(array1, fileNameFull);
-                if (pos0 > -1)
-                {
-                    StringBuilder sb = new StringBuilder("The following file is already in the list: \n");
-                    sb.AppendLine();
-                    sb.Append(fileNameFull);
-                    sb.AppendLine();
-                    MessageBox.Show(sb.ToString());
-                }
-                */
-
-                //else if (pos1 > -1)
-                //{
-                //    StringBuilder sb = new StringBuilder("The following file is already in the list: ");
-                //    sb.AppendLine();
-                //    sb.Append(fileNameFull);
-                //    sb.AppendLine();
-                //    MessageBox.Show(sb.ToString());
-                //}
                 else
+                // Otherwise load the files
                 {
                     for (int i = 0; i < fileNames.Length; i++)
                     {
@@ -240,16 +309,12 @@ namespace photolog
 
                         string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
                         //Image img = Image.FromFile(fileNameFull);
-                        Bitmap bmp1 = new Bitmap(fFull);
+                        Bitmap bmp1 = new Bitmap(fFull);                       
 
                         //Object[] row = new object[] { fileNam, img, "", fileNameFull };
                         Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
                         dataGridView1.Rows.Add(row);
-
-
-
-
-                        /*
+                        /* 
                         string fileNam = Path.GetFileNameWithoutExtension(fileNames[0]);
                         Image img = Image.FromFile(fileNameFull);
                         Object[] row = new object[] { fileNam, img, "Insert caption here", fileNameFull };
@@ -261,9 +326,8 @@ namespace photolog
                 dgLength();
                 capLength();
                 fileSize();
-                
+                fileSizeTotal();
             }
-
         }
 
         private void dataGridView1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
@@ -286,8 +350,7 @@ namespace photolog
 
 
 
-        // Overlay file name on top of image
-       
+        // Overlay file name on top of image      
         private void dataGridView1_CellPainting(object sender,
                                 DataGridViewCellPaintingEventArgs e)
         {
@@ -307,13 +370,29 @@ namespace photolog
                 e.Graphics.DrawString(result, e.CellStyle.Font,
                 Brushes.Crimson, e.CellBounds.Left, y);
 
-                //e.Graphics.DrawString(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString(), e.CellStyle.Font,
-                //Brushes.Crimson, e.CellBounds.Left, y);
+                //FillRectangle() and use MeasureString()
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(e.CellBounds.Location.X + 4, e.CellBounds.Location.Y + 4, 13, 13);
+
+                e.Graphics.FillRectangle(Brushes.White, rect);
+                //e.PaintContent(rect);
+
+
                 e.Handled = true;                        // done with the image column 
             }
         }
 
+
+
         
+
+
+
+
+
+
+
+
+
         // METHOD - Calculate Image size
         private void fileSize()
         {
@@ -338,6 +417,24 @@ namespace photolog
         }
 
 
+        // METHOD - calculate Image file size
+        private void fileSizeTotal()
+        {
+            float n, d;
+            float total = 0;
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+
+            {
+                float filesize = new FileInfo(row.Cells[3].Value.ToString()).Length;
+                //float filesize = (File.OpenRead(dataGridView1.SelectedRows[0].Cells[3].Value.ToString())).Length;
+                n = filesize / 1048576;
+                d = filesize % 1048576;
+                total += n;
+                textBox5.Text = total.ToString("n2");
+            }
+
+        }
+
         // METHOD - calculate dataGridView1 Length
         private void dgLength()
         {
@@ -357,22 +454,8 @@ namespace photolog
         }
         
 
-        // CELL CLICK - Get caption length
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            capLength();
-            fileSize();
-        }
 
-
-        // CREATE WORD DOC
-        private void button2_Click(object sender, EventArgs e)
-        {
-            CreateWordDoc(dataGridView1);
-        }
-
-
-        //delete
+        // BUTTON - delete
         private void button1_Click_1(object sender, EventArgs e)
         {
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
@@ -380,11 +463,12 @@ namespace photolog
                 dataGridView1.Rows.Remove(row);
                 dataGridView1.ClearSelection();
                 dgLength();
+                fileSizeTotal();
             }
         }
 
 
-        // UP
+        // BUTTON - UP
         private void button3_Click_1(object sender, EventArgs e)
         {
             DataGridView dgv = dataGridView1;
@@ -408,7 +492,7 @@ namespace photolog
         }
 
 
-        // DOWN
+        // BUTTON - DOWN
         private void button4_Click(object sender, EventArgs e)
         {
             DataGridView dgv = dataGridView1;
@@ -435,6 +519,11 @@ namespace photolog
         }
 
 
+        // BUTTON - CREATE WORD DOC
+        private void button2_Click(object sender, EventArgs e)
+        {
+            CreateWordDoc(dataGridView1);
+        }
 
 
         // METHOD - Create the Word doc
@@ -518,27 +607,6 @@ namespace photolog
         }
 
 
-        // Create Datable of datagridViewView0
-        private System.Data.DataTable GetDataTableFromDGV0(DataGridView dgv)
-        {
-            System.Data.DataTable dt1 = new System.Data.DataTable();
-            dt1.Columns.Add("fileName", typeof(string));
-            dt1.Columns.Add("dataGridView0Bitmap", typeof(string));
-            dt1.Columns.Add("dataGridView0Caption", typeof(string));
-            dt1.Columns.Add("dataGridView0Path", typeof(string));
-
-            object[] cellValues1 = new object[dgv.Columns.Count];
-            foreach (DataGridViewRow row in dgv.Rows)
-            {
-                for (int ii = 0; ii < row.Cells.Count; ii++)
-                {
-                    cellValues1[ii] = row.Cells[ii].Value;
-                }
-                dt1.Rows.Add(cellValues1);
-            }
-            return dt1;
-        }
-
 
         // Create Datable of datagridViewView1
         private System.Data.DataTable GetDataTableFromDGV1(DataGridView dgv)
@@ -563,82 +631,32 @@ namespace photolog
         }
 
 
-        // MENU - Save project
-        private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DataSet dS = new DataSet();
-            //System.Data.DataTable dT1 = GetDataTableFromDGV0(dataGridView0);
-            System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
-
-            //dS.Tables.Add(dT1);
-            dS.Tables.Add(dT2);
 
 
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
-            saveFileDialog.Title = "Save work as .XML file";
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
-            }
-        }
+
+     
 
 
-        // MENU - Resume project
-        private void resumeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //FolderBrowserDialog fbd = new FolderBrowserDialog();
-            //fbd.Description = "Choose an your photolog .XML file";
-
-            OpenFileDialog ofd = new OpenFileDialog();
 
 
-            ofd.Filter = "XML Files (*.xml)|*.xml";
-            ofd.FilterIndex = 1;
-            //ofd.Multiselect = false;
 
-            // check user selects pass
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                string xmlFileName = ofd.FileName;
 
-                Console.WriteLine(xmlFileName);
 
-                XDocument doc = XDocument.Load(xmlFileName);
-                //Console.WriteLine(doc);
-                /*
-                foreach (var dm1 in doc.Descendants("Table1"))
-                {
-                    string fileName = dm1.Element("fileName").Value; ;
-                    Image img = Image.FromFile(dm1.Element("dataGridView0Path").Value.ToString());
-                    var pth = dm1.Element("dataGridView0Path").Value;
-                    dataGridView0.Rows.Add(fileName, img, "", pth);
-                }
-                */
-                try
-                {
-                    foreach (var dm2 in doc.Descendants("Table1"))
-                    {
-                        string fileName = dm2.Element("fileName").Value;
-                        string fileNameFull = dm2.Element("dataGridView1Path").Value.ToString();
-                        Image img = Image.FromFile(dm2.Element("dataGridView1Path").Value.ToString());
-                        var capt = dm2.Element("dataGridView1Caption").Value;
-                        var pth = dm2.Element("dataGridView1Path").Value;
-                        dataGridView1.Rows.Add(fileName, img, capt, pth);
-                    }
-                    dgLength();
-                }
-                catch (Exception exc)
-                {
-                    StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
-                    myStringBuilder.Append(xmlFileName + "\n\n");
-                    myStringBuilder.Append("The saved project tried to load the following file: \n\n");
-                    myStringBuilder.Append(exc.Message + "\n\n");
-                    myStringBuilder.Append("But this file does not exist in this folder location. Have you perhaps moved it? Or has it been renamed? \n\n");
-                    MessageBox.Show(myStringBuilder.ToString());
-                }
-            }
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // METHOD - Vary image quality
         private void VaryQualityLevel()
@@ -744,6 +762,27 @@ namespace photolog
         //}
 
 
+
+        //// Create Datable of datagridViewView0
+        //private System.Data.DataTable GetDataTableFromDGV0(DataGridView dgv)
+        //{
+        //    System.Data.DataTable dt1 = new System.Data.DataTable();
+        //    dt1.Columns.Add("fileName", typeof(string));
+        //    dt1.Columns.Add("dataGridView0Bitmap", typeof(string));
+        //    dt1.Columns.Add("dataGridView0Caption", typeof(string));
+        //    dt1.Columns.Add("dataGridView0Path", typeof(string));
+
+        //    object[] cellValues1 = new object[dgv.Columns.Count];
+        //    foreach (DataGridViewRow row in dgv.Rows)
+        //    {
+        //        for (int ii = 0; ii < row.Cells.Count; ii++)
+        //        {
+        //            cellValues1[ii] = row.Cells[ii].Value;
+        //        }
+        //        dt1.Rows.Add(cellValues1);
+        //    }
+        //    return dt1;
+        //}
 
 
         //// Link to readme on GitHub
