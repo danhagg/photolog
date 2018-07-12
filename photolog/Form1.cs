@@ -227,17 +227,13 @@ namespace photolog
         }
 
 
-
         // MENU - Drag & Drop Individual Images
         void dataGridView1_DragDrop(object sender, DragEventArgs e)
         {
             System.Drawing.Point clientPoint = dataGridView1.PointToClient(new System.Drawing.Point(e.X, e.Y));
-
             // Get the row index of the item the mouse is below. 
             int rowIndexOfItemUnderMouseToDrop =
                 dataGridView1.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
-
-            Console.WriteLine(rowIndexOfItemUnderMouseToDrop);
 
 
             // Make an array of all files being dragged in
@@ -265,35 +261,44 @@ namespace photolog
                 else
                 // Otherwise load the files
                 {
-                    for (int i = 0; i < fileNames.Length; i++)
+                    // For loading into an empty dataGridView1
+                    if (dataGridView1.Rows.Count == 0)
                     {
-                        string fFull = Path.GetFullPath(fileNames[i]);
-                        string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
-                        Bitmap bmp1 = new Bitmap(fFull);
-                        Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
-                        dataGridView1.Rows.Add(row);
-
-                        // Add at index under mouse
-                        //dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop, row);
-                        // Move highlighted + slected to top of that index
-                      
-                        /* 
-                        Old way with Image not Bitmap
-                        Image img = Image.FromFile(fileNameFull);
-                        Object[] row = new object[] { fileNam, img, "Insert caption here", fileNameFull };
-                        */
+                        for (int i = 0; i < fileNames.Length; i++)
+                        {
+                            string fFull = Path.GetFullPath(fileNames[i]);
+                            string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
+                            Bitmap bmp1 = new Bitmap(fFull);
+                            Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
+                            dataGridView1.Rows.Add(row);
+                        }
                     }
-                    //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
-                    //dataGridView1.CurrentCell = dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Cells[rowIndexOfItemUnderMouseToDrop];
+                    // For loading into an already populated dataGridView1
+                    else
+                    {
+                        for (int i = 0; i < fileNames.Length; i++)
+                        {
+                            string fFull = Path.GetFullPath(fileNames[i]);
+                            string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
+                            Bitmap bmp1 = new Bitmap(fFull);
+                            Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
+                            // Add at index under mouse for first and + i for rest
+                            dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);                          
+                        }
+                        // Move highlighted + slected to top of that index
+                        //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
+                        dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
+                    }                  
                 }
-                
                 dgLength();
                 capLength();
                 fileSize();
-                fileSizeTotal();
+                fileSizeTotal();               
+                updatePictureBox();
             }
         }
 
+ 
 
         // BUTTON - UP
         private void button3_Click_1(object sender, EventArgs e)
@@ -393,6 +398,20 @@ namespace photolog
             }
         }
 
+        /*
+        // Allows the right click to highlight a row in dataGridView1
+        private void dataGridView1_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                var htiUp = dataGridView1.HitTest(e.X, e.Y);
+                dataGridView1.ClearSelection();
+                dataGridView1.CurrentCell = dataGridView1.Rows[htiUp.RowIndex].Cells[htiUp.ColumnIndex];
+                dataGridView1.Rows[htiUp.RowIndex].Selected = true;
+                updatePictureBox();
+            }
+        }
+        */
 
         // Send to TOP
         void top_Click(object sender, EventArgs e)
