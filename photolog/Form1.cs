@@ -22,6 +22,28 @@ namespace photolog
         {
             InitializeComponent();
 
+            //Create right click menu..
+            ContextMenuStrip s = new ContextMenuStrip();
+
+            // add one right click menu item named as hello           
+            ToolStripMenuItem top = new ToolStripMenuItem();
+            ToolStripMenuItem bottom = new ToolStripMenuItem();
+            top.Text = "Send to TOP";
+            bottom.Text = "Send to BOTTOM";
+
+            // add the clickevent of hello item
+            top.Click += top_Click;
+            bottom.Click += bottom_Click;
+
+            // add the item in right click menu
+            s.Items.Add(top);
+            s.Items.Add(bottom);
+
+            // attach the right click menu with form
+            this.ContextMenuStrip = s;
+
+            this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseDown);
+
             this.AllowDrop = true;
             //this.DragOver += new DragEventHandler(Form1_DragOver);
             //this.DragDrop += new DragEventHandler(Form1_DragDrop);
@@ -62,12 +84,15 @@ namespace photolog
 
 
             // pictureBox1
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
+
+            ToolTip toolTip1 = new ToolTip();
+            toolTip1.SetToolTip(button2, "Make a Word document");
+            toolTip1.SetToolTip(button1, "Rotation is only saved in your photolog project and NOT to your computer's file system");
 
 
             // photolog version
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            Console.WriteLine(version);
             label5.Text = "Version: " + version;
         }
 
@@ -119,7 +144,6 @@ namespace photolog
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string xmlFileName = ofd.FileName;
-                Console.WriteLine(xmlFileName);
                 // For updating textBox
                 string xmlFile = Path.GetFileName(xmlFileName);
                 label7.Text = xmlFile;
@@ -164,6 +188,34 @@ namespace photolog
         // MENU - Change My parent folder
 
 
+        // Overlay file name on top of image      
+        private void dataGridView1_CellPainting(object sender,
+                                DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0) return;                  // no image in the header
+            if (e.ColumnIndex == this.dataGridView1.Columns["imageColumn"].Index)
+
+            {
+                e.PaintBackground(e.ClipBounds, false);  // no highlighting
+                e.PaintContent(e.ClipBounds);
+
+                // calculate the location of your text..:
+                int y = e.CellBounds.Bottom - 17;         // your  font height
+
+                string mystring = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+                var result = mystring.Substring(mystring.Length - Math.Min(4, mystring.Length));
+
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(e.CellBounds.Location.X + 1, e.CellBounds.Location.Y + 49, 35, 14);
+                e.Graphics.FillRectangle(Brushes.White, rect);
+
+                e.Graphics.DrawString(result, e.CellStyle.Font,
+                Brushes.Crimson, e.CellBounds.Left, y);
+
+                //e.PaintContent(rect);
+                e.Handled = true;                        // done with the image column 
+            }
+        }
+
 
         // Paint the 
         private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
@@ -176,119 +228,18 @@ namespace photolog
 
 
 
-        // Caption Cell click = update caption length
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (dataGridView1.CurrentCell.ColumnIndex.Equals(2) && e.RowIndex != -1)
-            {
-                if (dataGridView1.CurrentCell != null && dataGridView1.CurrentCell.Value != null)
-                    capLength();
-            }
-        }
-
-
-        // Image cell click = View larger image
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            updatePictureBox();
-        }
-
-
-        // update pictureBox
-        private void updatePictureBox()
-        {
-            String txt = dataGridView1.CurrentRow.Cells[3].Value.ToString();
-            Console.WriteLine(txt);
-            if (txt != null)
-            {
-                Image img;
-                using (var bmpTemp = new Bitmap(txt))
-                {
-                    img = new Bitmap(bmpTemp);
-                    pictureBox1.Image = img;
-                    textBox4.Text = txt;
-                }
-                //Image newImage = Image.FromFile(txt);
-                //Process.Start(txt);
-                //pictureBox1.Image = Image.FromFile(txt);
-                //textBox4.Text = txt;
-            }
-            else
-            {
-                MessageBox.Show("No Item is selected");
-            }
-            capLength();
-            fileSize();
-        }
-
-
-
-        // BUTTON - Rotate Image
-        private void button1_Click_2(object sender, EventArgs e)
-        {
-            RotateImage();
-        }
-
-
-
-        // METHOD - Rotate Image
-        public Image RotateImage()
-        {
-            //var bmp = new Bitmap(textBox4.Text);
-            var bmp = pictureBox1.Image;
-
-            bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
-            return pictureBox1.Image = bmp;
-        }
-
-
-        // Save rotated Image
-        private void button5_Click(object sender, EventArgs e)
-        {
-            var fd = new SaveFileDialog();
-            //fd.FileName = textBox4.Text;
-            string sourceDirectory = Path.GetDirectoryName(textBox4.Text);
-            fd.InitialDirectory = Path.GetFullPath(sourceDirectory);
-            fd.RestoreDirectory = true;
-            fd.OverwritePrompt = true;
-
-
-            //fd.Filter = "Bmp(*.BMP;)|*.BMP;| Jpg(*Jpg)|*.jpg";
-            fd.Filter = "Jpg(*Jpg)|*.jpg";
-            if (fd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-
-                if (System.IO.File.Exists(textBox4.Text))
-                    System.IO.File.Delete(textBox4.Text);
-
-                pictureBox1.Image.Save(fd.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
-                /*
-                switch (Path.GetExtension(fd.FileName))
-                {
-                    case ".BMP":
-                        
-                        
-                        //pictureBox1.Image.Save(fd.FileName, System.Drawing.Imaging.ImageFormat.Bmp);
-                        break;
-                    case ".Jpg":
-                        pictureBox1.Image.Save(fd.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
-                        break;
-                    default:
-                        break;
-                } 
-                */
-            }
-        }
-
-
-
-
-
-
         // MENU - Drag & Drop Individual Images
-        //void Form1_DragDrop(object sender, DragEventArgs e)
         void dataGridView1_DragDrop(object sender, DragEventArgs e)
         {
+            System.Drawing.Point clientPoint = dataGridView1.PointToClient(new System.Drawing.Point(e.X, e.Y));
+
+            // Get the row index of the item the mouse is below. 
+            int rowIndexOfItemUnderMouseToDrop =
+                dataGridView1.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
+
+            Console.WriteLine(rowIndexOfItemUnderMouseToDrop);
+
+
             // Make an array of all files being dragged in
             string[] fileNames = e.Data.GetData(DataFormats.FileDrop) as string[];
             if (fileNames != null && fileNames.Length != 0)
@@ -307,7 +258,6 @@ namespace photolog
 
                     foreach (string id in intersection)
                     {
-                        Console.WriteLine(id);
                         sb.Append(id + "\n");
                     }
                     MessageBox.Show(sb.ToString());
@@ -318,23 +268,25 @@ namespace photolog
                     for (int i = 0; i < fileNames.Length; i++)
                     {
                         string fFull = Path.GetFullPath(fileNames[i]);
-
                         string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
-                        //Image img = Image.FromFile(fileNameFull);
                         Bitmap bmp1 = new Bitmap(fFull);
-
-                        //Object[] row = new object[] { fileNam, img, "", fileNameFull };
                         Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
                         dataGridView1.Rows.Add(row);
+
+                        // Add at index under mouse
+                        //dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop, row);
+                        // Move highlighted + slected to top of that index
+                      
                         /* 
-                        string fileNam = Path.GetFileNameWithoutExtension(fileNames[0]);
+                        Old way with Image not Bitmap
                         Image img = Image.FromFile(fileNameFull);
                         Object[] row = new object[] { fileNam, img, "Insert caption here", fileNameFull };
-                        dataGridView1.Rows.Add(row);
-                        dgLength();
                         */
                     }
+                    //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
+                    //dataGridView1.CurrentCell = dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Cells[rowIndexOfItemUnderMouseToDrop];
                 }
+                
                 dgLength();
                 capLength();
                 fileSize();
@@ -342,7 +294,80 @@ namespace photolog
             }
         }
 
+
+        // BUTTON - UP
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            DataGridView dgv = dataGridView1;
+            try
+            {
+                int totalRows = dgv.Rows.Count;
+                // get index of the row for the selected cell
+                int rowIndex = dgv.SelectedCells[0].OwningRow.Index;
+                if (rowIndex == 0)
+                    return;
+                // get index of the column for the selected cell
+                int colIndex = dgv.SelectedCells[0].OwningColumn.Index;
+                DataGridViewRow selectedRow = dgv.Rows[rowIndex];
+                dgv.Rows.Remove(selectedRow);
+                dgv.Rows.Insert(rowIndex - 1, selectedRow);
+                dgv.ClearSelection();
+                dgv.Rows[rowIndex - 1].Selected = true;
+
+            }
+            catch { }
+        }
+
+
+        // BUTTON - DOWN
+        private void button4_Click(object sender, EventArgs e)
+        {
+            DataGridView dgv = dataGridView1;
+            try
+            {
+                int totalRows = dgv.Rows.Count;
+
+                // get index of the row for the selected cell
+                int rowIndex = dgv.SelectedCells[0].OwningRow.Index;
+
+                if (rowIndex == totalRows - 1)
+                    return;
+                // get index of the column for the selected cell
+                int colIndex = dgv.SelectedCells[0].OwningColumn.Index;
+
+                DataGridViewRow selectedRow = dgv.Rows[rowIndex];
+                dgv.Rows.Remove(selectedRow);
+                dgv.Rows.Insert(rowIndex + 1, selectedRow);
+                dgv.ClearSelection();
+                dgv.Rows[rowIndex + 1].Selected = true;
+
+            }
+            catch { }
+        }
+
+
+        // BUTTON - delete
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            {
+                dataGridView1.Rows.Remove(row);
+                dataGridView1.ClearSelection();
+                dgLength();
+                fileSizeTotal();
+            }
+        }
+
+
+        // DragEnter needed??
         private void dataGridView1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+
+
+        // MENU - Drag & Drop Individual Images
+        private void dataGridView1_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.All;
         }
@@ -354,53 +379,166 @@ namespace photolog
             e.Effect = DragDropEffects.All;
         }
 
-        // MENU - Drag & Drop Individual Images
-        private void dataGridView1_DragOver(object sender, DragEventArgs e)
+
+        // Allows the right click to highlight a row in dataGridView1
+        private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
         {
-            e.Effect = DragDropEffects.All;
-        }
-
-
-
-        // Overlay file name on top of image      
-        private void dataGridView1_CellPainting(object sender,
-                                DataGridViewCellPaintingEventArgs e)
-        {
-            if (e.RowIndex < 0) return;                  // no image in the header
-            if (e.ColumnIndex == this.dataGridView1.Columns["imageColumn"].Index)
-
+            if (e.Button == MouseButtons.Right)
             {
-                e.PaintBackground(e.ClipBounds, false);  // no highlighting
-                e.PaintContent(e.ClipBounds);
-
-                // calculate the location of your text..:
-                int y = e.CellBounds.Bottom - 17;         // your  font height
-
-                string mystring = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
-                var result = mystring.Substring(mystring.Length - Math.Min(4, mystring.Length));
-
-                //FillRectangle() and use MeasureString()
-                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(e.CellBounds.Location.X + 1, e.CellBounds.Location.Y + 49, 35, 14);
-                e.Graphics.FillRectangle(Brushes.White, rect);
-
-                e.Graphics.DrawString(result, e.CellStyle.Font,
-                Brushes.Crimson, e.CellBounds.Left, y);
-
-
-                //e.PaintContent(rect);
-
-
-                e.Handled = true;                        // done with the image column 
+                var hti = dataGridView1.HitTest(e.X, e.Y);
+                dataGridView1.ClearSelection();
+                dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
+                dataGridView1.Rows[hti.RowIndex].Selected = true;
+                updatePictureBox();
             }
         }
 
 
+        // Send to TOP
+        void top_Click(object sender, EventArgs e)
+        {
+            DataGridView dgv = dataGridView1;
+            try
+            {
+                int totalRows = dgv.Rows.Count;
+                // get index of the row for the selected cell
+                int rowIndex = dgv.SelectedCells[0].OwningRow.Index;
+                if (rowIndex == 0)
+                    return;
+                // get index of the column for the selected cell
+                int colIndex = dgv.SelectedCells[0].OwningColumn.Index;
+                DataGridViewRow selectedRow = dgv.Rows[rowIndex];
+                dgv.Rows.Remove(selectedRow);
+                dgv.Rows.Insert(0, selectedRow);
+                dgv.ClearSelection();
+                dgv.Rows[rowIndex + 1].Selected = true;
+                //dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
+                dataGridView1.CurrentCell = dataGridView1.Rows[rowIndex + 1].Cells[0];
+                updatePictureBox();
+            }
+            catch { }
+        }
+
+
+        // Send to BOTTOM
+        void bottom_Click(object sender, EventArgs e)
+        {
+            DataGridView dgv = dataGridView1;
+            try
+            {
+                int totalRows = dgv.Rows.Count;
+                Console.WriteLine(totalRows);
+
+                // get index of the row for the selected cell
+                int rowIndex = dgv.SelectedCells[0].OwningRow.Index;
+                if (rowIndex == totalRows - 1)
+                    return;
+                // get index of the column for the selected cell
+                int colIndex = dgv.SelectedCells[0].OwningColumn.Index;
+                DataGridViewRow selectedRow = dgv.Rows[rowIndex];
+                dgv.Rows.Remove(selectedRow);
+                dgv.Rows.Insert(totalRows - 1, selectedRow);
+                dgv.ClearSelection();
+                dgv.Rows[rowIndex].Selected = true;
+                updatePictureBox();
+            }
+            catch { }
+        }
+
+
+        // Image cell click = View larger image
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            updatePictureBox();
+        }
+
+
+        // update pictureBox
+        private void updatePictureBox()
+        {
+            Bitmap resizedImage;
+
+            String txt = dataGridView1.CurrentRow.Cells[3].Value.ToString();
+
+            if (txt != null)
+            {
+                Image img;
+                using (var bmpTemp = new Bitmap(txt))
+                {
+                    img = new Bitmap(bmpTemp);
+
+                    int rectHeight = pictureBox1.Height;
+                    int rectWidth = pictureBox1.Width;
+
+                    //if the image is squared set it's height and width to the smallest of the desired dimensions (our box). In the current example rectHeight<rectWidth
+                    if (img.Height == img.Width)
+                    {
+                        resizedImage = new Bitmap(img, rectHeight, rectHeight);
+                    }
+                    else
+                    {
+                        //calculate aspect ratio
+                        float aspect = img.Width / (float)img.Height;
+                        int newWidth, newHeight;
+                        //calculate new dimensions based on aspect ratio
+                        newWidth = (int)(rectWidth * aspect);
+                        newHeight = (int)(newWidth / aspect);
+                        //if one of the two dimensions exceed the box dimensions
+                        if (newWidth > rectWidth || newHeight > rectHeight)
+                        {
+                            //depending on which of the two exceeds the box dimensions set it as the box dimension and calculate the other one based on the aspect ratio
+                            if (newWidth > newHeight)
+                            {
+                                newWidth = rectWidth;
+                                newHeight = (int)(newWidth / aspect);
+                            }
+                            else
+                            {
+                                newHeight = rectHeight;
+                                newWidth = (int)(newHeight * aspect);
+                            }
+                        }
+                        resizedImage = new Bitmap(img, newWidth, newHeight);
+                        pictureBox1.Image = resizedImage;
+                        textBox4.Text = txt;
+                    }
+                    // Use default image viewer
+                    //Process.Start(txt);
+                }
+            }
+            else
+            {
+                MessageBox.Show("No Item is selected");
+            }
+            capLength();
+            fileSize();
+        }
 
 
 
+        // BUTTON - Rotate Image
+        private void button1_Click_2(object sender, EventArgs e)
+        {
+            RotateImage();
+
+            // store rotation value in dgv1
+
+            // retrieve that rotation value for pictureBox
+
+            // update thumbnail rotation
+        }
 
 
 
+        // METHOD - Rotate Image
+        public Image RotateImage()
+        {
+            //var bmp = new Bitmap(textBox4.Text);
+            var bmp = pictureBox1.Image;
+
+            bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            return pictureBox1.Image = bmp;
+        }
 
 
 
@@ -448,6 +586,19 @@ namespace photolog
 
         }
 
+
+
+        // Caption Cell click = update caption length
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView1.CurrentCell.ColumnIndex.Equals(2) && e.RowIndex != -1)
+            {
+                if (dataGridView1.CurrentCell != null && dataGridView1.CurrentCell.Value != null)
+                    capLength();
+            }
+        }
+
+
         // METHOD - calculate dataGridView1 Length
         private void dgLength()
         {
@@ -466,70 +617,6 @@ namespace photolog
             }
         }
 
-
-
-        // BUTTON - delete
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
-            {
-                dataGridView1.Rows.Remove(row);
-                dataGridView1.ClearSelection();
-                dgLength();
-                fileSizeTotal();
-            }
-        }
-
-
-        // BUTTON - UP
-        private void button3_Click_1(object sender, EventArgs e)
-        {
-            DataGridView dgv = dataGridView1;
-            try
-            {
-                int totalRows = dgv.Rows.Count;
-                // get index of the row for the selected cell
-                int rowIndex = dgv.SelectedCells[0].OwningRow.Index;
-                if (rowIndex == 0)
-                    return;
-                // get index of the column for the selected cell
-                int colIndex = dgv.SelectedCells[0].OwningColumn.Index;
-                DataGridViewRow selectedRow = dgv.Rows[rowIndex];
-                dgv.Rows.Remove(selectedRow);
-                dgv.Rows.Insert(rowIndex - 1, selectedRow);
-                dgv.ClearSelection();
-                dgv.Rows[rowIndex - 1].Selected = true;
-
-            }
-            catch { }
-        }
-
-
-        // BUTTON - DOWN
-        private void button4_Click(object sender, EventArgs e)
-        {
-            DataGridView dgv = dataGridView1;
-            try
-            {
-                int totalRows = dgv.Rows.Count;
-                Console.WriteLine("total rows {0}", totalRows);
-                // get index of the row for the selected cell
-                int rowIndex = dgv.SelectedCells[0].OwningRow.Index;
-                Console.WriteLine("rowIndex {0}", rowIndex);
-                if (rowIndex == totalRows - 1)
-                    return;
-                // get index of the column for the selected cell
-                int colIndex = dgv.SelectedCells[0].OwningColumn.Index;
-                Console.WriteLine("colIndex {0}", colIndex);
-                DataGridViewRow selectedRow = dgv.Rows[rowIndex];
-                dgv.Rows.Remove(selectedRow);
-                dgv.Rows.Insert(rowIndex + 1, selectedRow);
-                dgv.ClearSelection();
-                dgv.Rows[rowIndex + 1].Selected = true;
-                Console.WriteLine("dis{0}", rowIndex);
-            }
-            catch { }
-        }
 
 
         // Create Datable of datagridViewView1
@@ -663,6 +750,30 @@ namespace photolog
 
 
 
+        /*
+
+                // Save rotated Image
+        private void button5_Click(object sender, EventArgs e)
+        {
+            var fd = new SaveFileDialog();
+            //fd.FileName = textBox4.Text;
+            string sourceDirectory = Path.GetDirectoryName(textBox4.Text);
+            fd.InitialDirectory = Path.GetFullPath(sourceDirectory);
+            fd.RestoreDirectory = true;
+            fd.OverwritePrompt = true;
+
+
+            //fd.Filter = "Bmp(*.BMP;)|*.BMP;| Jpg(*Jpg)|*.jpg";
+            fd.Filter = "Jpg(*Jpg)|*.jpg";
+            if (fd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+
+                if (System.IO.File.Exists(textBox4.Text))
+                    System.IO.File.Delete(textBox4.Text);
+
+                pictureBox1.Image.Save(fd.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+            }
+        }
 
 
         // METHOD - Vary image quality
@@ -721,6 +832,8 @@ namespace photolog
         {
             VaryQualityLevel();
         }
+    */
+
     }
 }
 
