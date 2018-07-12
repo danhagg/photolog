@@ -1,46 +1,25 @@
 Photolog_Desktop by Dan (dhaggerty@pronetgroup.com)
 
-This is a short readme, it is suggested that you read it.
+A very brief explanation of how the app works.
 
-Table of contents:
-A. How to use photolog
-B. Simple guide on how Photolog_Desktop works
+Photolog_Desktop can simply be seen as an assembly area for the files on your system. It does nothing to the underlying files. It does not move them or rotate them. 
 
+When you drag images into the assembly area the list displays a thumbnail of the image and the last 4 digits of the file name. 
+There is also a caption of text for you to fill in.
+Clicking on an image updates the large picture box to show the image. Here you can rotate the image.
 
+When you save a project, a simple temorary file is made (.xml). 
+It is recommended you store the .xml file in same folder as your images. 
+This is handy especially if you copy the folder of images to a thumb drive or other computer to work on as you can use the "Change parent folder option" to recover all your work.
 
+This .xml file contains 3 key pieces of information per image:
+1. The location of the image on your computer/drive. eg, "C:\Users\dhaggerty\Documents\images\bayou.jpg"
+2. The caption you enetered for that image "This is the Bayou"
+3. The rotation (stored as on of 4 integers) that you applied to that image. Either "0", "1", "2", "3".
 
-A. How to Use Photolog
+When you resume a project, using the example above, Photolog_Desktop does the following:
+1. Looks for the image at "C:\Users\dhaggerty\Documents\images\bayou.jpg"
+2. Loads the caption
+3. Rotates the image by the integer stored
 
-1. From File Menu > Drag n Drop individual images
-2. Drag the images from the folder to workspace.
-3. Close folder
-4. Move images Up and down to reorder with "Up" and "Down" buuttons
-5. Delete an image with "DELETE" button
-6. The image size for the selected image is displayed in the Img (MB) box. This box turns red if an image is above 2 MB in size. Building Word documents with large images will slow down the performance of Microsft Word. You may wish to chose a smaller image.
-7. Double-click an image to see it enlarged
-8. The caption length is displayed in the "caption" box.
-9. The last 4 characters of the image filename are displayed on the image (but NOT in the Word document)
-10. Caption length is forced to be below 220 characters as the Word document will not format to two images per page otherwise.
-11. DO NOT number captions. Photolog will do this automatically.
-12. Number of images in workspace displaye in "# Imgs" box
-13. "Publish" button will autogenerate a word document with captions.
-14. File > Save current project. Will save a .XML file of current progress. Can be saved anywhere. Maybe keep it in your images folder.
-15. File > Resume project. Select the XML file you saved earlier.
-
-
-
-
-
-
-B. Simple guide on how Photolog_Desktop works
-
-This software works by using pointers to your filesystem. 
-When you save a project, a simple file is made (.xml) that tells Photolog_Desktop where all the images you are saving are located on your drive.
-When you resume a project, Photolog_Desktop uses the xml file to look in those locations. 
-If you moved them between saving and resuming your project then u will have issues.
-
-
-
-To add
-Make scrollable during transfer
-Transfer files from outside folder into app
+At no point does Photolog_Desktop rotate or alter the images actually stored on your computer. 
