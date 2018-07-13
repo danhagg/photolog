@@ -74,7 +74,7 @@ namespace photolog
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.Columns["Caption"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.TopLeft;
             dataGridView1.AllowDrop = true;
-            //dataGridView1.MultiSelect = true;
+            dataGridView1.MultiSelect = true;
 
             dataGridView1.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
 
@@ -131,7 +131,14 @@ namespace photolog
         // MENU - Save
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("");
+            string path = textBox6.Text;
+
+            DataSet dS = new DataSet();
+            System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
+            dS.Tables.Add(dT2);
+            dS.WriteXml(File.Open(path, FileMode.Create));
+
+            AutoClosingMessageBox.Show(textBox6.Text, "Saved", 3000);
         }
 
 
@@ -248,6 +255,9 @@ namespace photolog
         }
 
 
+
+
+
         // Paint the row headers
         private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
@@ -266,6 +276,7 @@ namespace photolog
             int rowIndexOfItemUnderMouseToDrop =
                 dataGridView1.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
 
+            Console.WriteLine(rowIndexOfItemUnderMouseToDrop);
 
             // Make an array of all files being dragged in
             string[] fileNames = e.Data.GetData(DataFormats.FileDrop) as string[];
@@ -307,18 +318,38 @@ namespace photolog
                     // For loading into an already populated dataGridView1
                     else
                     {
-                        for (int i = 0; i < fileNames.Length; i++)
+                        if (rowIndexOfItemUnderMouseToDrop == -1)
                         {
-                            string fFull = Path.GetFullPath(fileNames[i]);
-                            string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
-                            Bitmap bmp1 = new Bitmap(fFull);
-                            Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
-                            // Add at index under mouse for first and + i for rest
-                            dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);                          
+                            int totalRows = dataGridView1.Rows.Count;
+                            for (int i = 0; i < fileNames.Length; i++)
+                            {
+                                string fFull = Path.GetFullPath(fileNames[i]);
+                                string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
+                                Bitmap bmp1 = new Bitmap(fFull);
+                                Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
+                                // Add at index under mouse for first and + i for rest
+                                dataGridView1.Rows.Insert(totalRows + i, row);
+                            }
+                            // Move highlighted + slected to top of that index
+                            //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
+                            dataGridView1.CurrentCell = this.dataGridView1[1, totalRows];
                         }
-                        // Move highlighted + slected to top of that index
-                        //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
-                        dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
+                        else
+                        {
+                            for (int i = 0; i < fileNames.Length; i++)
+                            {
+                                string fFull = Path.GetFullPath(fileNames[i]);
+                                string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
+                                Bitmap bmp1 = new Bitmap(fFull);
+                                Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
+                                // Add at index under mouse for first and + i for rest
+                                dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);
+                            }
+                            // Move highlighted + slected to top of that index
+                            //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
+                            dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
+                        }
+
                     }                  
                 }
                 dgLength();
@@ -389,21 +420,26 @@ namespace photolog
             int cnt = 0;
             int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
-            {
-                dataGridView1.Rows.Remove(row);
-                dataGridView1.ClearSelection();
-                cnt += 1;
-            }
-            dgLength();
-            fileSizeTotal();
-            dataGridView1.Rows[rowIndex - cnt].Selected = true;
-            dataGridView1.CurrentCell = this.dataGridView1[1, rowIndex - cnt];
-            updatePictureBox();
+                {
+                    dataGridView1.Rows.Remove(row);
+                    dataGridView1.ClearSelection();
+                    cnt += 1;
+                    Console.WriteLine(cnt);
+                    Console.WriteLine(rowIndex);
+                }
+                dgLength();
+                fileSizeTotal();
+                if (cnt < rowIndex)
+                {
+                    dataGridView1.Rows[rowIndex - cnt].Selected = true;
+                    dataGridView1.CurrentCell = this.dataGridView1[1, rowIndex - cnt];
+                }
+                else
+                {
+                    return;
+                }
+                updatePictureBox();
         }
-
-
-
-
 
 
         // DragEnter needed??
@@ -522,8 +558,18 @@ namespace photolog
             Bitmap resizedImage;
 
             String txt = dataGridView1.CurrentRow.Cells[3].Value.ToString();
+            float filesize = new FileInfo(dataGridView1.SelectedRows[0].Cells[3].Value.ToString()).Length;
+
 
             if (txt != null)
+                if (filesize > 5000000)
+            {
+                MessageBox.Show("This image exceeds 5 MB and may cause problems if the app tries to view it.\n\n" +
+                    "It is also like to cause problems if you try and PUBLISH it in your Word Document. " +
+                    "Maybe you could try compressing the image or use a different one?");
+            }
+                
+            else
             {
                 Image img;
                 using (var bmpTemp = new Bitmap(txt))
@@ -710,7 +756,24 @@ namespace photolog
         // BUTTON - CREATE WORD DOC
         private void button2_Click(object sender, EventArgs e)
         {
+            //AutoClosingMessageBox.Show("Creating Your Word Document", "In Progress...", 5000);
+            //IsOn = !IsOn;
             CreateWordDoc(dataGridView1);
+            
+        }
+
+        private bool _IsOn;
+        public bool IsOn
+        {
+            get
+            {
+                return _IsOn;
+            }
+            set
+            {
+                _IsOn = value;
+                button2.Text = _IsOn ? "On" : "Off";
+            }
         }
 
 
@@ -758,7 +821,9 @@ namespace photolog
                     string caption = DGV.Rows[i].Cells[2].Value.ToString();
 
 
-                    InlineShape pic = rngTarget1.InlineShapes.AddPicture(fileName1, ref oMissing, ref oMissing, ref anchor);
+                    // Picture placement
+                    //InlineShape pic = rngTarget1.InlineShapes.AddPicture(fileName1, ref oMissing, ref oMissing, ref anchor);
+                    InlineShape pic = rngTarget1.InlineShapes.AddPicture(fileName1, ref oMissing, ref oMissing, ref oMissing);
 
                     Shape sh = pic.ConvertToShape();
                     sh.LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoCTrue;
@@ -777,7 +842,8 @@ namespace photolog
                     }
 
                     sh.Left = (float)WdShapePosition.wdShapeCenter;
-                    sh.Top = 0;
+                    sh.Top = (float)WdShapePosition.wdShapeTop;
+                    //sh.Top = 0;
 
                     //Write substring into Word doc with a bullet before it.
                     rngTarget0.InsertBefore(caption + "\v");
@@ -785,11 +851,20 @@ namespace photolog
                     //rngTarget1.InsertParagraphAfter();                
                 }
 
+
+                /*
                 foreach (Shape ilPicture in oDoc.Shapes)
                 {
                     //ilPicture.{compress the picture}
                 }
+                */
 
+                /*
+                foreach (Shape ilPicture in oDoc.Shapes)
+                {
+                    //ilPicture.{ROTATE}
+                }
+                */
             }
 
         }
