@@ -22,10 +22,10 @@ namespace photolog
         {
             InitializeComponent();
 
-            //Create right click menu..
+            //Create right click menu using contextmenustrip for right click move top bottom
             ContextMenuStrip s = new ContextMenuStrip();
 
-            // add one right click menu item named as hello           
+            // add one right click menu item named as top and bottom          
             ToolStripMenuItem top = new ToolStripMenuItem();
             ToolStripMenuItem bottom = new ToolStripMenuItem();
             top.Text = "Send to TOP";
@@ -43,6 +43,7 @@ namespace photolog
             this.ContextMenuStrip = s;
 
             this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseDown);
+            dataGridView1.RowHeaderMouseClick += new DataGridViewCellMouseEventHandler(OnRowHeaderMouseClick);
 
             this.AllowDrop = true;
             //this.DragOver += new DragEventHandler(Form1_DragOver);
@@ -50,7 +51,7 @@ namespace photolog
             this.dataGridView1.DragOver += new DragEventHandler(dataGridView1_DragOver);
             this.dataGridView1.DragDrop += new DragEventHandler(dataGridView1_DragDrop);
             this.dataGridView1.DragEnter += new DragEventHandler(dataGridView1_DragEnter);
-
+            this.dataGridView1.AllowDrop = true;
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
             // declare at form level
 
@@ -74,11 +75,12 @@ namespace photolog
             dataGridView1.Columns["Caption"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.TopLeft;
             dataGridView1.AllowDrop = true;
             //dataGridView1.MultiSelect = true;
+
             dataGridView1.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-            //dataGridView1.Columns[1].DefaultCellStyle.Font = new System.Drawing.Font("Verdana", 10F, FontStyle.Bold);
+
             dataGridView1.Columns[1].DefaultCellStyle.Font = new System.Drawing.Font("Verdana", 10F);
             dataGridView1.Columns[2].DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
-            //dataGridView1.Columns[2].SpellCheck.IsEnabled = true;
+
             dataGridView1.DefaultCellStyle.SelectionBackColor = Color.Blue;
             dataGridView1.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView1_CellPainting);
 
@@ -93,7 +95,7 @@ namespace photolog
 
             // photolog version
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            label5.Text = "Version: " + version;
+            label5.Text = "PhotoLog Desktop Version: " + version;
         }
 
 
@@ -121,7 +123,7 @@ namespace photolog
             {
                 dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
                 textBox6.Text = saveFileDialog.FileName;
-                label7.Text = Path.GetFileName(saveFileDialog.FileName);
+                //label7.Text = Path.GetFileName(saveFileDialog.FileName);
             }
         }
 
@@ -146,7 +148,7 @@ namespace photolog
                 string xmlFileName = ofd.FileName;
                 // For updating textBox
                 string xmlFile = Path.GetFileName(xmlFileName);
-                label7.Text = xmlFile;
+                //label7.Text = xmlFile;
 
                 dataGridView1.Rows.Clear();
 
@@ -217,7 +219,36 @@ namespace photolog
         }
 
 
-        // Paint the 
+        // Overlay file name on top of image      
+        private void pictureBox1_CellPainting(object sender,
+                                DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0) return;                  // no image in the header
+            if (e.ColumnIndex == this.dataGridView1.Columns["imageColumn"].Index)
+
+            {
+                e.PaintBackground(e.ClipBounds, false);  // no highlighting
+                e.PaintContent(e.ClipBounds);
+
+                // calculate the location of your text..:
+                int y = e.CellBounds.Bottom - 17;         // your  font height
+
+                string mystring = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+                var result = mystring.Substring(mystring.Length - Math.Min(4, mystring.Length));
+
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(e.CellBounds.Location.X + 1, e.CellBounds.Location.Y + 49, 35, 14);
+                e.Graphics.FillRectangle(Brushes.White, rect);
+
+                e.Graphics.DrawString(result, e.CellStyle.Font,
+                Brushes.Crimson, e.CellBounds.Left, y);
+
+                //e.PaintContent(rect);
+                e.Handled = true;                        // done with the image column 
+            }
+        }
+
+
+        // Paint the row headers
         private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             using (SolidBrush b = new SolidBrush(dataGridView1.RowHeadersDefaultCellStyle.ForeColor))
@@ -298,7 +329,7 @@ namespace photolog
             }
         }
 
- 
+
 
         // BUTTON - UP
         private void button3_Click_1(object sender, EventArgs e)
@@ -351,17 +382,28 @@ namespace photolog
         }
 
 
+
         // BUTTON - delete
         private void button1_Click_1(object sender, EventArgs e)
         {
+            int cnt = 0;
+            int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
             {
                 dataGridView1.Rows.Remove(row);
                 dataGridView1.ClearSelection();
-                dgLength();
-                fileSizeTotal();
+                cnt += 1;
             }
+            dgLength();
+            fileSizeTotal();
+            dataGridView1.Rows[rowIndex - cnt].Selected = true;
+            dataGridView1.CurrentCell = this.dataGridView1[1, rowIndex - cnt];
+            updatePictureBox();
         }
+
+
+
+
 
 
         // DragEnter needed??
@@ -385,33 +427,35 @@ namespace photolog
         }
 
 
-        // Allows the right click to highlight a row in dataGridView1
+        // Allows theleft and right click to highlight a row in dataGridView1
         private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
-            {
-                var hti = dataGridView1.HitTest(e.X, e.Y);
-                dataGridView1.ClearSelection();
-                dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
-                dataGridView1.Rows[hti.RowIndex].Selected = true;
-                updatePictureBox();
-            }
+            //if (e.Button == MouseButtons.Right)
+            //{
+                try
+                {
+                    var hti = dataGridView1.HitTest(e.X, e.Y);
+                    dataGridView1.ClearSelection();
+                    dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
+                    dataGridView1.Rows[hti.RowIndex].Selected = true;
+                    updatePictureBox();
+                }
+                catch
+                {
+                    return;
+                }
+            //}
         }
 
-        /*
-        // Allows the right click to highlight a row in dataGridView1
-        private void dataGridView1_MouseUp(object sender, MouseEventArgs e)
+
+        // Allows theleft and right click to highlight a row in dataGridView1
+        private void OnRowHeaderMouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                var htiUp = dataGridView1.HitTest(e.X, e.Y);
-                dataGridView1.ClearSelection();
-                dataGridView1.CurrentCell = dataGridView1.Rows[htiUp.RowIndex].Cells[htiUp.ColumnIndex];
-                dataGridView1.Rows[htiUp.RowIndex].Selected = true;
-                updatePictureBox();
-            }
+            int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
+            dataGridView1.Rows[rowIndex].Selected = true;
+            updatePictureBox();
         }
-        */
+
 
         // Send to TOP
         void top_Click(object sender, EventArgs e)
@@ -432,7 +476,7 @@ namespace photolog
                 dgv.ClearSelection();
                 dgv.Rows[rowIndex + 1].Selected = true;
                 //dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
-                dataGridView1.CurrentCell = dataGridView1.Rows[rowIndex + 1].Cells[0];
+                //dataGridView1.CurrentCell = dataGridView1.Rows[rowIndex + 1].Cells[0];
                 updatePictureBox();
             }
             catch { }
@@ -485,6 +529,8 @@ namespace photolog
                 using (var bmpTemp = new Bitmap(txt))
                 {
                     img = new Bitmap(bmpTemp);
+                    
+
 
                     int rectHeight = pictureBox1.Height;
                     int rectWidth = pictureBox1.Width;
@@ -770,6 +816,153 @@ namespace photolog
 
 
         /*
+ 
+            private void button4_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.Rows.Count == 0) return;
+
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                if (dataGridView1.CurrentCell.RowIndex > -1)
+                {
+                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
+            {
+                SelectedRows.Add(dgvr);
+            }
+
+            //SelectedRows.Sort(DataGridViewRowIndexCompare);
+
+            for (int i = SelectedRows.Count - 1; i >= 0; i--)
+            {
+                int selRowIndex = SelectedRows[i].Index;
+                if ((selRowIndex <= dataGridView1.Rows.Count - 1) && (!(selRowIndex == dataGridView1.Rows.Count - 1)))
+                {
+
+                    dataGridView1.Rows.Remove(SelectedRows[i]);
+                    if ((selRowIndex + 1) == dataGridView1.Rows.Count)
+                    {
+                        dataGridView1.Rows.Add();
+
+                    }
+                    dataGridView1.Rows[selRowIndex].Selected = false;
+                    dataGridView1.Rows.Insert(selRowIndex + 1, SelectedRows[i]);
+                    dataGridView1.Rows[selRowIndex + 1].Selected = true;
+
+                }
+
+            }
+
+        }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+
+            if (dataGridView1.Rows.Count == 0) return;
+
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                if (dataGridView1.CurrentCell.RowIndex > -1)
+                {
+                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
+            {
+                SelectedRows.Add(dgvr);
+            }
+
+            //SelectedRows.Sort(DataGridViewRowIndexCompare);
+
+            for (int i = 0; i <= SelectedRows.Count - 1; i++)
+            {
+                int selRowIndex = SelectedRows[i].Index;
+                if (selRowIndex > 0)
+                {
+                    //dataGridView1.Rows[selRowIndex].Selected = false;
+
+                    dataGridView1.Rows.Remove(SelectedRows[i]);
+                    dataGridView1.Rows[selRowIndex].Selected = false;
+                    //SelectedRows[i].Selected = false;
+                    dataGridView1.Rows.Insert(selRowIndex - 1, SelectedRows[i]);
+                    dataGridView1.CurrentCell.Selected = false;
+                    dataGridView1.Rows[selRowIndex - 1].Selected = true;
+
+                }
+            }
+
+            if (dataGridView1.SelectedRows.Count == 1)
+            {
+                dataGridView1.CurrentCell = dataGridView1.Rows[SelectedRows[0].Index].Cells[0];
+            }
+        }
+        //And this function for the sorting
+
+ private static int DataGridViewRowIndexCompare(DataGridViewRow x, DataGridViewRow y)
+        {
+            if (x == null)
+            {
+                if (y == null)
+                {
+                    // If x is null and y is null, they're
+                    // equal. 
+                    return 0;
+                }
+                else
+                {
+                    // If x is null and y is not null, y
+                    // is greater. 
+                    return -1;
+                }
+            }
+            else
+            {
+                // If x is not null...
+                //
+                if (y == null)
+                // ...and y is null, x is greater.
+                {
+                    return 1;
+                }
+                else
+                {
+                    // ...and y is not null, compare the 
+                    // lengths of the two strings.
+                    //
+                    int retval = x.Index.CompareTo(y.Index);
+
+                    if (retval != 0)
+                    {
+                        // If the strings are not of equal length,
+                        // the longer string is greater.
+                        //
+                        return retval;
+                    }
+                    else
+                    {
+                        // If the strings are of equal length,
+                        // sort them with ordinary string comparison.
+                        //
+                        return x.Index.CompareTo(y.Index);
+                    }
+                }
+            }
+        }
+
 
                 // Save rotated Image
         private void button5_Click(object sender, EventArgs e)
