@@ -173,7 +173,7 @@
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.textBox1.Location = new System.Drawing.Point(1375, 62);
+            this.textBox1.Location = new System.Drawing.Point(1389, 62);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(31, 20);
@@ -182,7 +182,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1304, 65);
+            this.label1.Location = new System.Drawing.Point(1318, 65);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 21;
@@ -259,7 +259,7 @@
             // textBox3
             // 
             this.textBox3.BackColor = System.Drawing.SystemColors.Window;
-            this.textBox3.Location = new System.Drawing.Point(810, 939);
+            this.textBox3.Location = new System.Drawing.Point(653, 98);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(40, 20);
@@ -269,11 +269,11 @@
             // 
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.SystemColors.Control;
-            this.label4.Location = new System.Drawing.Point(746, 942);
+            this.label4.Location = new System.Drawing.Point(696, 102);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(61, 13);
+            this.label4.Size = new System.Drawing.Size(29, 13);
             this.label4.TabIndex = 30;
-            this.label4.Text = "Image (MB)";
+            this.label4.Text = "(MB)";
             // 
             // pictureBox1
             // 
@@ -293,6 +293,7 @@
             this.button1.TabIndex = 32;
             this.button1.Text = "ROTATE";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click_2);
             // 
             // textBox4
@@ -301,7 +302,7 @@
             this.textBox4.Location = new System.Drawing.Point(689, 63);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(609, 20);
+            this.textBox4.Size = new System.Drawing.Size(623, 20);
             this.textBox4.TabIndex = 33;
             // 
             // label5
