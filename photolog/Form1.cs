@@ -361,57 +361,179 @@ namespace photolog
         }
 
 
-        /*
-        // BUTTON - UP
+        // Allows theleft and right click to highlight a row in dataGridView1
+        private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                try
+                {
+                    var hti = dataGridView1.HitTest(e.X, e.Y);
+                    dataGridView1.ClearSelection();
+                    dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
+                    dataGridView1.Rows[hti.RowIndex].Selected = true;
+                    updatePictureBox();
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+
+        // BUTTON UP
         private void button3_Click_1(object sender, EventArgs e)
         {
-            DataGridView dgv = dataGridView1;
-            try
-            {
-                int totalRows = dgv.Rows.Count;
-                // get index of the row for the selected cell
-                int rowIndex = dgv.SelectedCells[0].OwningRow.Index;
-                if (rowIndex == 0)
-                    return;
-                // get index of the column for the selected cell
-                int colIndex = dgv.SelectedCells[0].OwningColumn.Index;
-                DataGridViewRow selectedRow = dgv.Rows[rowIndex];
-                dgv.Rows.Remove(selectedRow);
-                dgv.Rows.Insert(rowIndex - 1, selectedRow);
-                dgv.ClearSelection();
-                dgv.Rows[rowIndex - 1].Selected = true;
 
+            if (dataGridView1.Rows.Count == 0) return;
+
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                if (dataGridView1.CurrentCell.RowIndex > -1)
+                {
+                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
+                }
+                else
+                {
+                    return;
+                }
             }
-            catch { }
+
+            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
+            {
+                SelectedRows.Add(dgvr);
+            }
+            SelectedRows.Sort(DataGridViewRowIndexCompare);
+            //foreach (int value in SelectedRows.Index)
+            //{
+            //    Console.WriteLine(value);
+            //}
+
+            for (int i = 0; i <= SelectedRows.Count - 1; i++)
+            {
+                Console.WriteLine(SelectedRows.Count);
+                int selRowIndex = SelectedRows[i].Index;
+                Console.WriteLine(selRowIndex);
+                if (selRowIndex > 0)
+                {
+                    dataGridView1.Rows.Remove(SelectedRows[i]);
+                    dataGridView1.Rows.Insert(selRowIndex - 1, SelectedRows[i]);
+                    dataGridView1.CurrentCell.Selected = false;
+                    dataGridView1.Rows[selRowIndex - 1].Selected = true;
+                }
+                else
+                {
+                    // if selRowIndex == 0
+                    return;
+                }
+            }
+            /*
+            if (dataGridView1.SelectedRows.Count == 1)
+            {
+                dataGridView1.CurrentCell = dataGridView1.Rows[SelectedRows[0].Index].Cells[0];
+            }*/
+            scrollGrid();
         }
 
-        
-        // BUTTON - DOWN
+
+        // BUTTON DOWN
         private void button4_Click(object sender, EventArgs e)
         {
-            DataGridView dgv = dataGridView1;
-            try
+            if (dataGridView1.Rows.Count == 0) return;
+
+            if (dataGridView1.SelectedRows.Count == 0)
             {
-                int totalRows = dgv.Rows.Count;
-
-                // get index of the row for the selected cell
-                int rowIndex = dgv.SelectedCells[0].OwningRow.Index;
-
-                if (rowIndex == totalRows - 1)
+                if (dataGridView1.CurrentCell.RowIndex > -1)
+                {
+                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
+                }
+                else
+                {
                     return;
-                // get index of the column for the selected cell
-                int colIndex = dgv.SelectedCells[0].OwningColumn.Index;
-
-                DataGridViewRow selectedRow = dgv.Rows[rowIndex];
-                dgv.Rows.Remove(selectedRow);
-                dgv.Rows.Insert(rowIndex + 1, selectedRow);
-                dgv.ClearSelection();
-                dgv.Rows[rowIndex + 1].Selected = true;
-
+                }
             }
-            catch { }
+
+            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
+            {
+                SelectedRows.Add(dgvr);
+            }
+
+            SelectedRows.Sort(DataGridViewRowIndexCompare);
+
+            for (int i = SelectedRows.Count - 1; i >= 0; i--)
+            {
+                int selRowIndex = SelectedRows[i].Index;
+                //if ((selRowIndex <= dataGridView1.Rows.Count - 1) && (!(selRowIndex == dataGridView1.Rows.Count - 1)))
+                if (selRowIndex < dataGridView1.Rows.Count - 1)
+                {
+                    dataGridView1.Rows.Remove(SelectedRows[i]);
+                    dataGridView1.Rows[selRowIndex].Selected = false;
+                    dataGridView1.Rows.Insert(selRowIndex + 1, SelectedRows[i]);
+                    dataGridView1.Rows[selRowIndex + 1].Selected = true;
+                }
+                else
+                {
+                    return;
+                }
+            }
+            scrollGrid();
         }
-        */
+
+
+        // Sorting function
+        private static int DataGridViewRowIndexCompare(DataGridViewRow x, DataGridViewRow y)
+        {
+            if (x == null)
+            {
+                if (y == null)
+                {
+                    // If x is null and y is null, they're
+                    // equal. 
+                    return 0;
+                }
+                else
+                {
+                    // If x is null and y is not null, y
+                    // is greater. 
+                    return -1;
+                }
+            }
+            else
+            {
+                // If x is not null...
+                //
+                if (y == null)
+                // ...and y is null, x is greater.
+                {
+                    return 1;
+                }
+                else
+                {
+                    // ...and y is not null, compare the 
+                    // lengths of the two strings.
+                    //
+                    int retval = x.Index.CompareTo(y.Index);
+
+                    if (retval != 0)
+                    {
+                        // If the strings are not of equal length,
+                        // the longer string is greater.
+                        //
+                        return retval;
+                    }
+                    else
+                    {
+                        // If the strings are of equal length,
+                        // sort them with ordinary string comparison.
+                        //
+                        return x.Index.CompareTo(y.Index);
+                    }
+                }
+            }
+        }
 
 
         // BUTTON - delete
@@ -431,8 +553,8 @@ namespace photolog
                 fileSizeTotal();
                 if (cnt < rowIndex)
                 {
-                    dataGridView1.Rows[rowIndex - cnt].Selected = true;
-                    dataGridView1.CurrentCell = this.dataGridView1[1, rowIndex - cnt];
+                    dataGridView1.Rows[rowIndex + 1 - cnt].Selected = true;
+                    dataGridView1.CurrentCell = this.dataGridView1[1, rowIndex + 1 - cnt];
                 }
                 else
                 {
@@ -442,57 +564,7 @@ namespace photolog
         }
 
 
-        // DragEnter needed??
-        private void dataGridView1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.All;
-        }
-
-
-        // MENU - Drag & Drop Individual Images
-        private void dataGridView1_DragOver(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.All;
-        }
-
-
-        // MENU - Drag & Drop Individual Images
-        private void Form1_DragOver(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.All;
-        }
-
-        
-        //// Allows theleft and right click to highlight a row in dataGridView1
-        //private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
-        //{
-        //    if (e.Button == MouseButtons.Left)
-        //    {
-        //        try
-        //        {
-        //            var hti = dataGridView1.HitTest(e.X, e.Y);
-        //            dataGridView1.ClearSelection();
-        //            dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
-        //            dataGridView1.Rows[hti.RowIndex].Selected = true;
-        //            updatePictureBox();
-        //        }
-        //        catch
-        //        {
-        //            return;
-        //        }
-        //    }
-        //}
-        
-
-        // Allows theleft and right click to highlight a row in dataGridView1
-        private void OnRowHeaderMouseClick(object sender, MouseEventArgs e)
-        {
-            int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
-            dataGridView1.Rows[rowIndex].Selected = true;
-            updatePictureBox();
-        }
-
-
+        /*
         // Send to TOP
         void top_Click(object sender, EventArgs e)
         {
@@ -516,6 +588,62 @@ namespace photolog
                 updatePictureBox();
             }
             catch { }
+        }
+        */
+
+        // BUTTON UP
+        void top_Click(object sender, EventArgs e)
+        {
+
+            if (dataGridView1.Rows.Count == 0) return;
+
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                if (dataGridView1.CurrentCell.RowIndex > -1)
+                {
+                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
+            {
+                SelectedRows.Add(dgvr);
+            }
+            SelectedRows.Sort(DataGridViewRowIndexCompare);
+            //foreach (int value in SelectedRows.Index)
+            //{
+            //    Console.WriteLine(value);
+            //}
+
+            for (int i = 0; i <= SelectedRows.Count - 1; i++)
+            {
+                int selRowIndex = SelectedRows[i].Index;
+                if (selRowIndex > 0)
+                {
+                    dataGridView1.Rows.Remove(SelectedRows[i]);
+                    //dataGridView1.Rows.Insert(selRowIndex - 1, SelectedRows[i]);
+                    dataGridView1.Rows.Insert(0 + i, SelectedRows[i]);
+                    dataGridView1.CurrentCell.Selected = false;
+                    dataGridView1.Rows[selRowIndex - 1].Selected = true;
+                }
+                else
+                {
+                    // if selRowIndex == 0
+                    return;
+                }
+            }
+            // now make selected rows the top SelectedRows.Count
+            dataGridView1.ClearSelection();
+            for (int j = 0; j < SelectedRows.Count; j++)
+            {
+                dataGridView1.Rows[j].Selected = true;
+            }
+            scrollGrid();
         }
 
 
@@ -542,6 +670,53 @@ namespace photolog
                 updatePictureBox();
             }
             catch { }
+        }
+
+
+        // Keeps the view centered
+        private void scrollGrid()
+        {
+
+            int halfWay = (dataGridView1.DisplayedRowCount(false) / 2);
+            if (dataGridView1.FirstDisplayedScrollingRowIndex + halfWay > dataGridView1.SelectedRows[0].Index ||
+                (dataGridView1.FirstDisplayedScrollingRowIndex + dataGridView1.DisplayedRowCount(false) - halfWay) <= dataGridView1.SelectedRows[0].Index)
+            {
+                int targetRow = dataGridView1.SelectedRows[0].Index;
+
+                targetRow = Math.Max(targetRow - halfWay, 0);
+                dataGridView1.FirstDisplayedScrollingRowIndex = targetRow;
+
+            }
+        }
+
+
+        // DragEnter needed??
+        private void dataGridView1_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+
+
+        // MENU - Drag & Drop Individual Images
+        private void dataGridView1_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+
+
+        // MENU - Drag & Drop Individual Images
+        private void Form1_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+        
+
+        // Allows theleft and right click to highlight a row in dataGridView1
+        private void OnRowHeaderMouseClick(object sender, MouseEventArgs e)
+        {
+            int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
+            dataGridView1.Rows[rowIndex].Selected = true;
+            updatePictureBox();
         }
 
 
@@ -866,240 +1041,14 @@ namespace photolog
                 }
                 */
             }
-
         }
+    }
+}
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-        // BUTTON DOWN
-        private void button4_Click(object sender, EventArgs e)
-        {
-            if (dataGridView1.Rows.Count == 0) return;
-
-            if (dataGridView1.SelectedRows.Count == 0)
-            {
-                if (dataGridView1.CurrentCell.RowIndex > -1)
-                {
-                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
-            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
-            {
-                SelectedRows.Add(dgvr);
-            }
-
-            Console.WriteLine("SR Count {0}", SelectedRows.Count);
-            Console.WriteLine("DG Length {0}", dataGridView1.Rows.Count);
-            SelectedRows.Sort(DataGridViewRowIndexCompare);
-
-
-
-            for (int i = SelectedRows.Count - 1; i >= 0; i--)
-            {
-                int selRowIndex = SelectedRows[i].Index;
-                Console.WriteLine("i {0} and serRowIndex {1}", i, selRowIndex);
-                //if ((selRowIndex <= dataGridView1.Rows.Count - 1) && (!(selRowIndex == dataGridView1.Rows.Count - 1)))
-                if (selRowIndex < dataGridView1.Rows.Count - 1)
-                {
-                        dataGridView1.Rows.Remove(SelectedRows[i]);
-                        dataGridView1.Rows[selRowIndex].Selected = false;
-                        dataGridView1.Rows.Insert(selRowIndex + 1, SelectedRows[i]);
-                        dataGridView1.Rows[selRowIndex + 1].Selected = true;         
-                }
-                else
-                {
-                    return;
-                }
-
-            }
-            scrollGrid();
-        }
-
-
-        // BUTTON UP
-        private void button3_Click_1(object sender, EventArgs e)
-        {
-
-            if (dataGridView1.Rows.Count == 0) return;
-
-            if (dataGridView1.SelectedRows.Count == 0)
-            {
-                if (dataGridView1.CurrentCell.RowIndex > -1)
-                {
-                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
-            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
-            {
-                SelectedRows.Add(dgvr);
-            }
-
-            SelectedRows.Sort(DataGridViewRowIndexCompare);
-            //foreach (int value in SelectedRows.Index)
-            //{
-            //    Console.WriteLine(value);
-            //}
-            
-            for (int i = 0; i <= SelectedRows.Count - 1; i++)
-            {
-                Console.WriteLine(SelectedRows.Count);
-                int selRowIndex = SelectedRows[i].Index;
-                Console.WriteLine(selRowIndex);
-                if (selRowIndex > 0)
-                {
-                    ////dataGridView1.Rows[selRowIndex].Selected = false;
-                    dataGridView1.Rows.Remove(SelectedRows[i]);
-                    //dataGridView1.Rows[selRowIndex].Selected = false;
-                    ////SelectedRows[i].Selected = false;
-                    dataGridView1.Rows.Insert(selRowIndex - 1, SelectedRows[i]);
-                    dataGridView1.CurrentCell.Selected = false;
-                    dataGridView1.Rows[selRowIndex - 1].Selected = true;
-
-                }
-                else
-                {
-                    // if selRowIndex == 0
-                    return;
-                }
-            }
-            /*
-            if (dataGridView1.SelectedRows.Count == 1)
-            {
-                dataGridView1.CurrentCell = dataGridView1.Rows[SelectedRows[0].Index].Cells[0];
-            }*/
-            scrollGrid();
-        }
-
-
-
-        // Sorting function
-        private static int DataGridViewRowIndexCompare(DataGridViewRow x, DataGridViewRow y)
-        {
-            if (x == null)
-            {
-                if (y == null)
-                {
-                    // If x is null and y is null, they're
-                    // equal. 
-                    return 0;
-                }
-                else
-                {
-                    // If x is null and y is not null, y
-                    // is greater. 
-                    return -1;
-                }
-            }
-            else
-            {
-                // If x is not null...
-                //
-                if (y == null)
-                // ...and y is null, x is greater.
-                {
-                    return 1;
-                }
-                else
-                {
-                    // ...and y is not null, compare the 
-                    // lengths of the two strings.
-                    //
-                    int retval = x.Index.CompareTo(y.Index);
-
-                    if (retval != 0)
-                    {
-                        // If the strings are not of equal length,
-                        // the longer string is greater.
-                        //
-                        return retval;
-                    }
-                    else
-                    {
-                        // If the strings are of equal length,
-                        // sort them with ordinary string comparison.
-                        //
-                        return x.Index.CompareTo(y.Index);
-                    }
-                }
-            }
-        }
-
-
-        // Keeps the view centered
-        private void scrollGrid()
-        {
-
-            int halfWay = (dataGridView1.DisplayedRowCount(false) / 2);
-            if (dataGridView1.FirstDisplayedScrollingRowIndex + halfWay > dataGridView1.SelectedRows[0].Index ||
-                (dataGridView1.FirstDisplayedScrollingRowIndex + dataGridView1.DisplayedRowCount(false) - halfWay) <= dataGridView1.SelectedRows[0].Index)
-            {
-                int targetRow = dataGridView1.SelectedRows[0].Index;
-
-                targetRow = Math.Max(targetRow - halfWay, 0);
-                dataGridView1.FirstDisplayedScrollingRowIndex = targetRow;
-
-            }
-        }
-
-
-        /*
-
-                // Save rotated Image
-        private void button5_Click(object sender, EventArgs e)
-        {
-            var fd = new SaveFileDialog();
-            //fd.FileName = textBox4.Text;
-            string sourceDirectory = Path.GetDirectoryName(textBox4.Text);
-            fd.InitialDirectory = Path.GetFullPath(sourceDirectory);
-            fd.RestoreDirectory = true;
-            fd.OverwritePrompt = true;
-
-
-            //fd.Filter = "Bmp(*.BMP;)|*.BMP;| Jpg(*Jpg)|*.jpg";
-            fd.Filter = "Jpg(*Jpg)|*.jpg";
-            if (fd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-
-                if (System.IO.File.Exists(textBox4.Text))
-                    System.IO.File.Delete(textBox4.Text);
-
-                pictureBox1.Image.Save(fd.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
-            }
-        }
-
-
+/*
         // METHOD - Vary image quality
         private void VaryQualityLevel()
         {
@@ -1156,11 +1105,27 @@ namespace photolog
         {
             VaryQualityLevel();
         }
+
+
+                // Allows theleft and right click to highlight a row in dataGridView1
+        private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                try
+                {
+                    var hti = dataGridView1.HitTest(e.X, e.Y);
+                    dataGridView1.ClearSelection();
+                    dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
+                    dataGridView1.Rows[hti.RowIndex].Selected = true;
+                    updatePictureBox();
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+
     */
-
-    }
-}
-
-
-
-
