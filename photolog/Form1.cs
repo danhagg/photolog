@@ -462,27 +462,27 @@ namespace photolog
             e.Effect = DragDropEffects.All;
         }
 
-        /*
-        // Allows theleft and right click to highlight a row in dataGridView1
-        private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
-        {
-            //if (e.Button == MouseButtons.Right)
-            //{
-                try
-                {
-                    var hti = dataGridView1.HitTest(e.X, e.Y);
-                    dataGridView1.ClearSelection();
-                    dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
-                    dataGridView1.Rows[hti.RowIndex].Selected = true;
-                    updatePictureBox();
-                }
-                catch
-                {
-                    return;
-                }
-            //}
-        }
-        */
+        
+        //// Allows theleft and right click to highlight a row in dataGridView1
+        //private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
+        //{
+        //    if (e.Button == MouseButtons.Left)
+        //    {
+        //        try
+        //        {
+        //            var hti = dataGridView1.HitTest(e.X, e.Y);
+        //            dataGridView1.ClearSelection();
+        //            dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
+        //            dataGridView1.Rows[hti.RowIndex].Selected = true;
+        //            updatePictureBox();
+        //        }
+        //        catch
+        //        {
+        //            return;
+        //        }
+        //    }
+        //}
+        
 
         // Allows theleft and right click to highlight a row in dataGridView1
         private void OnRowHeaderMouseClick(object sender, MouseEventArgs e)
@@ -914,24 +914,27 @@ namespace photolog
                 SelectedRows.Add(dgvr);
             }
 
+            Console.WriteLine("SR Count {0}", SelectedRows.Count);
+            Console.WriteLine("DG Length {0}", dataGridView1.Rows.Count);
             SelectedRows.Sort(DataGridViewRowIndexCompare);
+
+
 
             for (int i = SelectedRows.Count - 1; i >= 0; i--)
             {
                 int selRowIndex = SelectedRows[i].Index;
-                if ((selRowIndex <= dataGridView1.Rows.Count - 1) && (!(selRowIndex == dataGridView1.Rows.Count - 1)))
+                Console.WriteLine("i {0} and serRowIndex {1}", i, selRowIndex);
+                //if ((selRowIndex <= dataGridView1.Rows.Count - 1) && (!(selRowIndex == dataGridView1.Rows.Count - 1)))
+                if (selRowIndex < dataGridView1.Rows.Count - 1)
                 {
-
-                    dataGridView1.Rows.Remove(SelectedRows[i]);
-                    if ((selRowIndex + 1) == dataGridView1.Rows.Count)
-                    {
-                        dataGridView1.Rows.Add();
-
-                    }
-                    dataGridView1.Rows[selRowIndex].Selected = false;
-                    dataGridView1.Rows.Insert(selRowIndex + 1, SelectedRows[i]);
-                    dataGridView1.Rows[selRowIndex + 1].Selected = true;
-
+                        dataGridView1.Rows.Remove(SelectedRows[i]);
+                        dataGridView1.Rows[selRowIndex].Selected = false;
+                        dataGridView1.Rows.Insert(selRowIndex + 1, SelectedRows[i]);
+                        dataGridView1.Rows[selRowIndex + 1].Selected = true;         
+                }
+                else
+                {
+                    return;
                 }
 
             }
@@ -1057,6 +1060,7 @@ namespace photolog
         // Keeps the view centered
         private void scrollGrid()
         {
+
             int halfWay = (dataGridView1.DisplayedRowCount(false) / 2);
             if (dataGridView1.FirstDisplayedScrollingRowIndex + halfWay > dataGridView1.SelectedRows[0].Index ||
                 (dataGridView1.FirstDisplayedScrollingRowIndex + dataGridView1.DisplayedRowCount(false) - halfWay) <= dataGridView1.SelectedRows[0].Index)
