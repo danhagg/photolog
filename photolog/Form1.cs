@@ -42,7 +42,7 @@ namespace photolog
             // attach the right click menu with form
             this.ContextMenuStrip = s;
 
-            this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseDown);
+            //this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseDown);
             dataGridView1.RowHeaderMouseClick += new DataGridViewCellMouseEventHandler(OnRowHeaderMouseClick);
 
             this.AllowDrop = true;
@@ -361,7 +361,7 @@ namespace photolog
         }
 
 
-
+        /*
         // BUTTON - UP
         private void button3_Click_1(object sender, EventArgs e)
         {
@@ -385,7 +385,7 @@ namespace photolog
             catch { }
         }
 
-
+        
         // BUTTON - DOWN
         private void button4_Click(object sender, EventArgs e)
         {
@@ -411,7 +411,7 @@ namespace photolog
             }
             catch { }
         }
-
+        */
 
 
         // BUTTON - delete
@@ -424,8 +424,8 @@ namespace photolog
                     dataGridView1.Rows.Remove(row);
                     dataGridView1.ClearSelection();
                     cnt += 1;
-                    Console.WriteLine(cnt);
-                    Console.WriteLine(rowIndex);
+                    //Console.WriteLine(cnt);
+                    //Console.WriteLine(rowIndex);
                 }
                 dgLength();
                 fileSizeTotal();
@@ -462,7 +462,7 @@ namespace photolog
             e.Effect = DragDropEffects.All;
         }
 
-
+        /*
         // Allows theleft and right click to highlight a row in dataGridView1
         private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -482,7 +482,7 @@ namespace photolog
                 }
             //}
         }
-
+        */
 
         // Allows theleft and right click to highlight a row in dataGridView1
         private void OnRowHeaderMouseClick(object sender, MouseEventArgs e)
@@ -565,7 +565,7 @@ namespace photolog
                 if (filesize > 5000000)
             {
                 MessageBox.Show("This image exceeds 5 MB and may cause problems if the app tries to view it.\n\n" +
-                    "It is also like to cause problems if you try and PUBLISH it in your Word Document. " +
+                    "It is also likely to cause problems if you try and PUBLISH it in your Word Document. " +
                     "Maybe you could try compressing the image or use a different one?");
             }
                 
@@ -890,9 +890,9 @@ namespace photolog
 
 
 
-        /*
- 
-            private void button4_Click(object sender, EventArgs e)
+        
+        // BUTTON DOWN
+        private void button4_Click(object sender, EventArgs e)
         {
             if (dataGridView1.Rows.Count == 0) return;
 
@@ -914,7 +914,7 @@ namespace photolog
                 SelectedRows.Add(dgvr);
             }
 
-            //SelectedRows.Sort(DataGridViewRowIndexCompare);
+            SelectedRows.Sort(DataGridViewRowIndexCompare);
 
             for (int i = SelectedRows.Count - 1; i >= 0; i--)
             {
@@ -935,9 +935,11 @@ namespace photolog
                 }
 
             }
-
+            scrollGrid();
         }
 
+
+        // BUTTON UP
         private void button3_Click_1(object sender, EventArgs e)
         {
 
@@ -961,33 +963,46 @@ namespace photolog
                 SelectedRows.Add(dgvr);
             }
 
-            //SelectedRows.Sort(DataGridViewRowIndexCompare);
-
+            SelectedRows.Sort(DataGridViewRowIndexCompare);
+            //foreach (int value in SelectedRows.Index)
+            //{
+            //    Console.WriteLine(value);
+            //}
+            
             for (int i = 0; i <= SelectedRows.Count - 1; i++)
             {
+                Console.WriteLine(SelectedRows.Count);
                 int selRowIndex = SelectedRows[i].Index;
+                Console.WriteLine(selRowIndex);
                 if (selRowIndex > 0)
                 {
-                    //dataGridView1.Rows[selRowIndex].Selected = false;
-
+                    ////dataGridView1.Rows[selRowIndex].Selected = false;
                     dataGridView1.Rows.Remove(SelectedRows[i]);
-                    dataGridView1.Rows[selRowIndex].Selected = false;
-                    //SelectedRows[i].Selected = false;
+                    //dataGridView1.Rows[selRowIndex].Selected = false;
+                    ////SelectedRows[i].Selected = false;
                     dataGridView1.Rows.Insert(selRowIndex - 1, SelectedRows[i]);
                     dataGridView1.CurrentCell.Selected = false;
                     dataGridView1.Rows[selRowIndex - 1].Selected = true;
 
                 }
+                else
+                {
+                    // if selRowIndex == 0
+                    return;
+                }
             }
-
+            /*
             if (dataGridView1.SelectedRows.Count == 1)
             {
                 dataGridView1.CurrentCell = dataGridView1.Rows[SelectedRows[0].Index].Cells[0];
-            }
+            }*/
+            scrollGrid();
         }
-        //And this function for the sorting
 
- private static int DataGridViewRowIndexCompare(DataGridViewRow x, DataGridViewRow y)
+
+
+        // Sorting function
+        private static int DataGridViewRowIndexCompare(DataGridViewRow x, DataGridViewRow y)
         {
             if (x == null)
             {
@@ -1038,6 +1053,24 @@ namespace photolog
             }
         }
 
+
+        // Keeps the view centered
+        private void scrollGrid()
+        {
+            int halfWay = (dataGridView1.DisplayedRowCount(false) / 2);
+            if (dataGridView1.FirstDisplayedScrollingRowIndex + halfWay > dataGridView1.SelectedRows[0].Index ||
+                (dataGridView1.FirstDisplayedScrollingRowIndex + dataGridView1.DisplayedRowCount(false) - halfWay) <= dataGridView1.SelectedRows[0].Index)
+            {
+                int targetRow = dataGridView1.SelectedRows[0].Index;
+
+                targetRow = Math.Max(targetRow - halfWay, 0);
+                dataGridView1.FirstDisplayedScrollingRowIndex = targetRow;
+
+            }
+        }
+
+
+        /*
 
                 // Save rotated Image
         private void button5_Click(object sender, EventArgs e)
