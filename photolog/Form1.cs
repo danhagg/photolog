@@ -541,26 +541,18 @@ namespace photolog
         {
             int cnt = 0;
             int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
+            int totalRows = dataGridView1.Rows.Count;
+            Console.WriteLine(rowIndex);
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
                 {
                     dataGridView1.Rows.Remove(row);
                     dataGridView1.ClearSelection();
                     cnt += 1;
-                    //Console.WriteLine(cnt);
-                    //Console.WriteLine(rowIndex);
                 }
                 dgLength();
                 fileSizeTotal();
-                if (cnt < rowIndex)
-                {
-                    dataGridView1.Rows[rowIndex + 1 - cnt].Selected = true;
-                    dataGridView1.CurrentCell = this.dataGridView1[1, rowIndex + 1 - cnt];
-                }
-                else
-                {
-                    return;
-                }
-                updatePictureBox();
+                textBox3.Text = "";
+                pictureBox1.Image = null;
         }
 
 
@@ -671,33 +663,6 @@ namespace photolog
         }
 
 
-        /*
-        // Send to BOTTOM
-        void bottom_Click(object sender, EventArgs e)
-        {
-            DataGridView dgv = dataGridView1;
-            try
-            {
-                int totalRows = dgv.Rows.Count;
-                Console.WriteLine(totalRows);
-
-                // get index of the row for the selected cell
-                int rowIndex = dgv.SelectedCells[0].OwningRow.Index;
-                if (rowIndex == totalRows - 1)
-                    return;
-                // get index of the column for the selected cell
-                int colIndex = dgv.SelectedCells[0].OwningColumn.Index;
-                DataGridViewRow selectedRow = dgv.Rows[rowIndex];
-                dgv.Rows.Remove(selectedRow);
-                dgv.Rows.Insert(totalRows - 1, selectedRow);
-                dgv.ClearSelection();
-                dgv.Rows[rowIndex].Selected = true;
-                updatePictureBox();
-            }
-            catch { }
-        }
-        */
-
         // Keeps the view centered
         private void scrollGrid()
         {
@@ -755,6 +720,8 @@ namespace photolog
         // update pictureBox
         private void updatePictureBox()
         {
+            fileSize();
+
             Bitmap resizedImage;
 
             String txt = dataGridView1.CurrentRow.Cells[3].Value.ToString();
@@ -764,9 +731,21 @@ namespace photolog
             if (txt != null)
                 if (filesize > 5000000)
             {
-                MessageBox.Show("This image exceeds 5 MB and may cause problems if the app tries to view it.\n\n" +
+                
+                pictureBox1.Image = null;
+
+                StringBuilder myStringBuilder = new StringBuilder("This image exceeds 5 MB: \n\n");
+                myStringBuilder.Append(txt + "\n\n");
+                myStringBuilder.Append("It may cause problems if the Photolog app tries to view it. \n\n" + 
                     "It is also likely to cause problems if you try and PUBLISH it in your Word Document. " +
-                    "Maybe you could try compressing the image or use a different one?");
+                "Maybe you could try compressing the image or use a different one?");
+                MessageBox.Show(myStringBuilder.ToString());
+
+                    /*
+                MessageBox.Show("This image exceeds 5 MB and may cause problems if the app tries to view it.\n\n" +
+                "It is also likely to cause problems if you try and PUBLISH it in your Word Document. " +
+                "Maybe you could try compressing the image or use a different one?");
+                */
             }
                 
             else
@@ -822,7 +801,6 @@ namespace photolog
                 MessageBox.Show("No Item is selected");
             }
             capLength();
-            fileSize();
         }
 
 
