@@ -564,33 +564,6 @@ namespace photolog
         }
 
 
-        /*
-        // Send to TOP
-        void top_Click(object sender, EventArgs e)
-        {
-            DataGridView dgv = dataGridView1;
-            try
-            {
-                int totalRows = dgv.Rows.Count;
-                // get index of the row for the selected cell
-                int rowIndex = dgv.SelectedCells[0].OwningRow.Index;
-                if (rowIndex == 0)
-                    return;
-                // get index of the column for the selected cell
-                int colIndex = dgv.SelectedCells[0].OwningColumn.Index;
-                DataGridViewRow selectedRow = dgv.Rows[rowIndex];
-                dgv.Rows.Remove(selectedRow);
-                dgv.Rows.Insert(0, selectedRow);
-                dgv.ClearSelection();
-                dgv.Rows[rowIndex + 1].Selected = true;
-                //dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
-                //dataGridView1.CurrentCell = dataGridView1.Rows[rowIndex + 1].Cells[0];
-                updatePictureBox();
-            }
-            catch { }
-        }
-        */
-
         // BUTTON UP
         void top_Click(object sender, EventArgs e)
         {
@@ -647,6 +620,58 @@ namespace photolog
         }
 
 
+        // BUTTON DOWN
+        private void bottom_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.Rows.Count == 0) return;
+
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                if (dataGridView1.CurrentCell.RowIndex > -1)
+                {
+                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
+            {
+                SelectedRows.Add(dgvr);
+            }
+
+            SelectedRows.Sort(DataGridViewRowIndexCompare);
+
+            for (int i = 0; i < SelectedRows.Count; i++)
+            {
+                int selRowIndex = SelectedRows[i].Index;
+
+                if (selRowIndex < dataGridView1.Rows.Count)
+                {
+                    dataGridView1.Rows.Remove(SelectedRows[i]);
+                    dataGridView1.Rows.Add(SelectedRows[i]);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            // now make selected rows the bottom SelectedRows.Count
+
+            
+            dataGridView1.ClearSelection();
+            for (int j = dataGridView1.Rows.Count - SelectedRows.Count; j < dataGridView1.Rows.Count; j++)
+            {
+                dataGridView1.Rows[j].Selected = true;
+            }
+            scrollGrid();
+        }
+
+
+        /*
         // Send to BOTTOM
         void bottom_Click(object sender, EventArgs e)
         {
@@ -671,7 +696,7 @@ namespace photolog
             }
             catch { }
         }
-
+        */
 
         // Keeps the view centered
         private void scrollGrid()
