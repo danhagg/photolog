@@ -131,14 +131,40 @@ namespace photolog
         // MENU - Save
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
             string path = textBox6.Text;
 
-            DataSet dS = new DataSet();
-            System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
-            dS.Tables.Add(dT2);
-            dS.WriteXml(File.Open(path, FileMode.Create));
+            if (path == "")
+            {
+                Console.WriteLine("empty");
+                DataSet dS = new DataSet();
+                //System.Data.DataTable dT1 = GetDataTableFromDGV0(dataGridView0);
+                System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
 
-            AutoClosingMessageBox.Show(textBox6.Text, "Saved", 3000);
+                //dS.Tables.Add(dT1);
+                dS.Tables.Add(dT2);
+
+
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
+                saveFileDialog.AddExtension = true;
+                saveFileDialog.Title = "Save work as .XML file";
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
+                    textBox6.Text = saveFileDialog.FileName;
+
+                }
+            }
+            else
+            {
+                DataSet dS = new DataSet();
+                System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
+                dS.Tables.Add(dT2);
+                dS.WriteXml(File.Open(path, FileMode.Create));
+
+                AutoClosingMessageBox.Show(textBox6.Text, "Saved", 3000);
+            }
         }
 
 
