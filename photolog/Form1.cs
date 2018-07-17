@@ -7,7 +7,7 @@ using Microsoft.Office.Interop.Word;
 using System.Reflection;
 using System.Data;
 using System.Xml.Linq;
-using System.Drawing.Imaging;
+using System.Windows.Forms.DataVisualization.Charting;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
@@ -92,6 +92,14 @@ namespace photolog
             toolTip1.SetToolTip(button2, "Make a Word document");
             toolTip1.SetToolTip(button1, "Rotation is only saved in your photolog project and NOT to your computer's file system");
 
+
+            // Chart
+            chart1.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
+            chart1.ChartAreas[0].AxisX.MinorGrid.Enabled = false;
+            chart1.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
+            chart1.ChartAreas[0].AxisY.MinorGrid.Enabled = false;
+            chart1.ChartAreas[0].AxisX.ScrollBar.Enabled = true;
+           
 
             // photolog version
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -205,6 +213,7 @@ namespace photolog
                     fileSizeTotal();
                     updatePictureBox();
                     textBox6.Text = xmlFileName;
+                    BarExample();
                 }
                 // Error
                 catch (Exception exc)
@@ -302,7 +311,7 @@ namespace photolog
             int rowIndexOfItemUnderMouseToDrop =
                 dataGridView1.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
 
-            Console.WriteLine(rowIndexOfItemUnderMouseToDrop);
+            //Console.WriteLine(rowIndexOfItemUnderMouseToDrop);
 
             // Make an array of all files being dragged in
             string[] fileNames = e.Data.GetData(DataFormats.FileDrop) as string[];
@@ -376,13 +385,14 @@ namespace photolog
                             dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
                         }
 
-                    }                  
+                    }
                 }
                 dgLength();
                 capLength();
                 fileSize();
-                fileSizeTotal();               
+                fileSizeTotal();
                 updatePictureBox();
+                BarExample();
             }
         }
 
@@ -439,9 +449,9 @@ namespace photolog
 
             for (int i = 0; i <= SelectedRows.Count - 1; i++)
             {
-                Console.WriteLine(SelectedRows.Count);
+                //Console.WriteLine(SelectedRows.Count);
                 int selRowIndex = SelectedRows[i].Index;
-                Console.WriteLine(selRowIndex);
+                //Console.WriteLine(selRowIndex);
                 if (selRowIndex > 0)
                 {
                     dataGridView1.Rows.Remove(SelectedRows[i]);
@@ -461,6 +471,7 @@ namespace photolog
                 dataGridView1.CurrentCell = dataGridView1.Rows[SelectedRows[0].Index].Cells[0];
             }*/
             scrollGrid();
+            BarExample();
         }
 
 
@@ -506,6 +517,7 @@ namespace photolog
                 }
             }
             scrollGrid();
+            BarExample();
         }
 
 
@@ -568,21 +580,21 @@ namespace photolog
             int cnt = 0;
             int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
             int totalRows = dataGridView1.Rows.Count;
-            Console.WriteLine(rowIndex);
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
-                {
-                    dataGridView1.Rows.Remove(row);
-                    dataGridView1.ClearSelection();
-                    cnt += 1;
-                }
-                dgLength();
-                fileSizeTotal();
-                textBox3.Text = "";
-                pictureBox1.Image = null;
+            {
+                dataGridView1.Rows.Remove(row);
+                dataGridView1.ClearSelection();
+                cnt += 1;
+            }
+            dgLength();
+            fileSizeTotal();
+            textBox3.Text = "";
+            pictureBox1.Image = null;
+            BarExample();
         }
 
 
-        // BUTTON UP
+        // BUTTON TOP
         void top_Click(object sender, EventArgs e)
         {
 
@@ -635,10 +647,11 @@ namespace photolog
                 dataGridView1.Rows[j].Selected = true;
             }
             scrollGrid();
+            BarExample();
         }
 
 
-        // BUTTON DOWN
+        // BUTTON BOTTOM
         private void bottom_Click(object sender, EventArgs e)
         {
             if (dataGridView1.Rows.Count == 0) return;
@@ -679,13 +692,14 @@ namespace photolog
             }
             // now make selected rows the bottom SelectedRows.Count
 
-            
+
             dataGridView1.ClearSelection();
             for (int j = dataGridView1.Rows.Count - SelectedRows.Count; j < dataGridView1.Rows.Count; j++)
             {
                 dataGridView1.Rows[j].Selected = true;
             }
             scrollGrid();
+            BarExample();
         }
 
 
@@ -725,7 +739,7 @@ namespace photolog
         {
             e.Effect = DragDropEffects.All;
         }
-        
+
 
         // Allows theleft and right click to highlight a row in dataGridView1
         private void OnRowHeaderMouseClick(object sender, MouseEventArgs e)
@@ -756,72 +770,72 @@ namespace photolog
 
             if (txt != null)
                 if (filesize > 5000000)
-            {
-                
-                pictureBox1.Image = null;
+                {
 
-                StringBuilder myStringBuilder = new StringBuilder("This image exceeds 5 MB: \n\n");
-                myStringBuilder.Append(txt + "\n\n");
-                myStringBuilder.Append("It may cause problems if the Photolog app tries to view it. \n\n" + 
-                    "It is also likely to cause problems if you try and PUBLISH it in your Word Document. " +
-                "Maybe you could try compressing the image or use a different one?");
-                MessageBox.Show(myStringBuilder.ToString());
+                    pictureBox1.Image = null;
+
+                    StringBuilder myStringBuilder = new StringBuilder("This image exceeds 5 MB: \n\n");
+                    myStringBuilder.Append(txt + "\n\n");
+                    myStringBuilder.Append("It may cause problems if the Photolog app tries to view it. \n\n" +
+                        "It is also likely to cause problems if you try and PUBLISH it in your Word Document. " +
+                    "Maybe you could try compressing the image or use a different one?");
+                    MessageBox.Show(myStringBuilder.ToString());
 
                     /*
                 MessageBox.Show("This image exceeds 5 MB and may cause problems if the app tries to view it.\n\n" +
                 "It is also likely to cause problems if you try and PUBLISH it in your Word Document. " +
                 "Maybe you could try compressing the image or use a different one?");
                 */
-            }
-                
-            else
-            {
-                Image img;
-                using (var bmpTemp = new Bitmap(txt))
-                {
-                    img = new Bitmap(bmpTemp);
-                    
-
-
-                    int rectHeight = pictureBox1.Height;
-                    int rectWidth = pictureBox1.Width;
-
-                    //if the image is squared set it's height and width to the smallest of the desired dimensions (our box). In the current example rectHeight<rectWidth
-                    if (img.Height == img.Width)
-                    {
-                        resizedImage = new Bitmap(img, rectHeight, rectHeight);
-                    }
-                    else
-                    {
-                        //calculate aspect ratio
-                        float aspect = img.Width / (float)img.Height;
-                        int newWidth, newHeight;
-                        //calculate new dimensions based on aspect ratio
-                        newWidth = (int)(rectWidth * aspect);
-                        newHeight = (int)(newWidth / aspect);
-                        //if one of the two dimensions exceed the box dimensions
-                        if (newWidth > rectWidth || newHeight > rectHeight)
-                        {
-                            //depending on which of the two exceeds the box dimensions set it as the box dimension and calculate the other one based on the aspect ratio
-                            if (newWidth > newHeight)
-                            {
-                                newWidth = rectWidth;
-                                newHeight = (int)(newWidth / aspect);
-                            }
-                            else
-                            {
-                                newHeight = rectHeight;
-                                newWidth = (int)(newHeight * aspect);
-                            }
-                        }
-                        resizedImage = new Bitmap(img, newWidth, newHeight);
-                        pictureBox1.Image = resizedImage;
-                        textBox4.Text = txt;
-                    }
-                    // Use default image viewer
-                    //Process.Start(txt);
                 }
-            }
+
+                else
+                {
+                    Image img;
+                    using (var bmpTemp = new Bitmap(txt))
+                    {
+                        img = new Bitmap(bmpTemp);
+
+
+
+                        int rectHeight = pictureBox1.Height;
+                        int rectWidth = pictureBox1.Width;
+
+                        //if the image is squared set it's height and width to the smallest of the desired dimensions (our box). In the current example rectHeight<rectWidth
+                        if (img.Height == img.Width)
+                        {
+                            resizedImage = new Bitmap(img, rectHeight, rectHeight);
+                        }
+                        else
+                        {
+                            //calculate aspect ratio
+                            float aspect = img.Width / (float)img.Height;
+                            int newWidth, newHeight;
+                            //calculate new dimensions based on aspect ratio
+                            newWidth = (int)(rectWidth * aspect);
+                            newHeight = (int)(newWidth / aspect);
+                            //if one of the two dimensions exceed the box dimensions
+                            if (newWidth > rectWidth || newHeight > rectHeight)
+                            {
+                                //depending on which of the two exceeds the box dimensions set it as the box dimension and calculate the other one based on the aspect ratio
+                                if (newWidth > newHeight)
+                                {
+                                    newWidth = rectWidth;
+                                    newHeight = (int)(newWidth / aspect);
+                                }
+                                else
+                                {
+                                    newHeight = rectHeight;
+                                    newWidth = (int)(newHeight * aspect);
+                                }
+                            }
+                            resizedImage = new Bitmap(img, newWidth, newHeight);
+                            pictureBox1.Image = resizedImage;
+                            textBox4.Text = txt;
+                        }
+                        // Use default image viewer
+                        //Process.Start(txt);
+                    }
+                }
             else
             {
                 MessageBox.Show("No Item is selected");
@@ -883,7 +897,7 @@ namespace photolog
         }
 
 
-        // METHOD - calculate Image file size
+        // METHOD - calculate Total Image file size
         private void fileSizeTotal()
         {
             float n, d;
@@ -918,7 +932,7 @@ namespace photolog
         private void dgLength()
         {
             int dgRows = dataGridView1.Rows.Count;
-            textBox1.Text = dgRows.ToString();
+            //textBox1.Text = dgRows.ToString();
         }
 
 
@@ -963,7 +977,7 @@ namespace photolog
             //AutoClosingMessageBox.Show("Creating Your Word Document", "In Progress...", 5000);
             //IsOn = !IsOn;
             CreateWordDoc(dataGridView1);
-            
+
         }
 
         private bool _IsOn;
@@ -1071,8 +1085,54 @@ namespace photolog
                 */
             }
         }
+
+
+
+
+        public void BarExample()
+        {
+            //float n;
+            List<float> points = new List<float>();
+            foreach (DataGridViewRow dgvr in dataGridView1.Rows)
+            {
+                float sz = new FileInfo(dgvr.Cells[3].Value.ToString()).Length;
+                points.Add(sz / 1048576);
+                //n = filesize / 1048576;
+            }
+            float[] pointsArray = points.ToArray();
+
+
+            //foreach (var item in pointsArray)
+            //{            
+            //    Console.WriteLine(item / 1048576);
+            //}
+            
+            chart1.Series.Clear();
+            chart1.Titles.Clear();
+            chart1.Titles.Add("Image Sizes (MB)");
+            chart1.Palette = ChartColorPalette.Grayscale;
+            chart1.ChartAreas[0].AxisX.LabelStyle.Enabled = false;
+            chart1.ChartAreas[0].AxisX.Minimum = 0;
+            chart1.AlignDataPointsByAxisLabel();
+            
+
+            // Add series.
+            for (int i = 0; i < dataGridView1.Rows.Count; i++)
+            {
+                System.Windows.Forms.DataVisualization.Charting.Series series = this.chart1.Series.Add(dataGridView1.Rows[i].Cells[3].Value.ToString());
+                series.Points.AddXY(i+1, pointsArray[i]);
+                if (pointsArray[i] >= 2)
+                {
+                    chart1.Series[i].Color = Color.Red;
+                    chart1.Series[i].Label = (i+1).ToString();
+                }
+
+            }
+            
+        }
     }
 }
+
 
 
 
