@@ -578,51 +578,43 @@ namespace photolog
         // BUTTON - delete
         private void button1_Click_1(object sender, EventArgs e)
         {
-            if (dataGridView1.Rows.Count > 0)
+            if (dataGridView1.Rows.Count > 0 && dataGridView1.SelectedRows.Count > 0)
             {
-                int cnt = 0;
                 int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
                 int totalRows = dataGridView1.Rows.Count;
+                Console.WriteLine("before {0}", rowIndex);
 
                 foreach (DataGridViewRow row in dataGridView1.SelectedRows)
                 {
-                    if (rowIndex != -1)
+                    if (rowIndex != -1 && dataGridView1.Rows.Count > 1)
                     {
                         dataGridView1.Rows.Remove(row);
                         dataGridView1.ClearSelection();
-                        cnt += 1;
+                        //dataGridView1.Rows[0].Selected = true;
+                        dgLength();
+                        fileSizeTotal();
+                        textBox3.Text = "";
+                        pictureBox1.Image = null;
+                        //updatePictureBox();
+                        BarExample();
                     }
                     else
                     {
-                        return;
+                        dataGridView1.Rows.Remove(row);
+                        dataGridView1.ClearSelection();
+                        dgLength();
+                        fileSizeTotal();
+                        textBox3.Text = "";
+                        //updatePictureBox();
+                        pictureBox1.Image = null;
+                        BarExample();
                     }
-
                 }
-                if (dataGridView1.Rows.Count > 0)
-                {
-                    dataGridView1.Rows[rowIndex].Selected = true;
-                    dgLength();
-                    fileSizeTotal();
-                    textBox3.Text = "";
-                    updatePictureBox();
-                    //pictureBox1.Image = null;
-                    BarExample();
-                }
-                else
-                {
-                    dgLength();
-                    fileSizeTotal();
-                    textBox3.Text = "";
-                    pictureBox1.Image = null;
-                    BarExample();
-                }
-
             }
             else
             {
                 return;
             }
-
         }
 
 
