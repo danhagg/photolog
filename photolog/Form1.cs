@@ -195,34 +195,44 @@ namespace photolog
 
                 // Read and load info from XML 
                 XDocument doc = XDocument.Load(xmlFileName);
-                try
+                if (doc.Root.Elements().Any())
                 {
-                    foreach (var dm2 in doc.Descendants("Table1"))
+                    try
                     {
-                        string fileName = dm2.Element("fileName").Value;
-                        string fileNameFull = dm2.Element("dataGridView1Path").Value.ToString();
-                        Image img = Image.FromFile(dm2.Element("dataGridView1Path").Value.ToString());
-                        var capt = dm2.Element("dataGridView1Caption").Value;
-                        var pth = dm2.Element("dataGridView1Path").Value;
-                        dataGridView1.Rows.Add(fileName, img, capt, pth);
+                        foreach (var dm2 in doc.Descendants("Table1"))
+                        {
+                            string fileName = dm2.Element("fileName").Value;
+                            string fileNameFull = dm2.Element("dataGridView1Path").Value.ToString();
+                            Image img = Image.FromFile(dm2.Element("dataGridView1Path").Value.ToString());
+                            var capt = dm2.Element("dataGridView1Caption").Value;
+                            var pth = dm2.Element("dataGridView1Path").Value;
+                            dataGridView1.Rows.Add(fileName, img, capt, pth);
+                        }
+                        dgLength();
+                        dgLength();
+                        capLength();
+                        fileSize();
+                        fileSizeTotal();
+                        updatePictureBox();
+                        textBox6.Text = xmlFileName;
+                        BarExample();
                     }
-                    dgLength();
-                    dgLength();
-                    capLength();
-                    fileSize();
-                    fileSizeTotal();
-                    updatePictureBox();
-                    textBox6.Text = xmlFileName;
-                    BarExample();
+                    // Error
+                    catch (Exception exc)
+                    {
+                        StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
+                        myStringBuilder.Append(xmlFileName + "\n\n");
+                        myStringBuilder.Append("The saved project tried to load the following file: \n\n");
+                        myStringBuilder.Append(exc.Message + "\n\n");
+                        myStringBuilder.Append("But this file does not exist in this folder location. Have you perhaps moved it? Or has it been renamed? \n\n");
+                        MessageBox.Show(myStringBuilder.ToString());
+                    }
                 }
-                // Error
-                catch (Exception exc)
+                else
                 {
                     StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
                     myStringBuilder.Append(xmlFileName + "\n\n");
-                    myStringBuilder.Append("The saved project tried to load the following file: \n\n");
-                    myStringBuilder.Append(exc.Message + "\n\n");
-                    myStringBuilder.Append("But this file does not exist in this folder location. Have you perhaps moved it? Or has it been renamed? \n\n");
+                    myStringBuilder.Append("But this file is empty. \n\n");
                     MessageBox.Show(myStringBuilder.ToString());
                 }
             }
@@ -397,7 +407,7 @@ namespace photolog
         }
 
 
-        // Allows theleft and right click to highlight a row in dataGridView1
+        // Allows the left and right click to highlight a row in dataGridView1
         private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -577,20 +587,53 @@ namespace photolog
         // BUTTON - delete
         private void button1_Click_1(object sender, EventArgs e)
         {
-            int cnt = 0;
-            int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
-            int totalRows = dataGridView1.Rows.Count;
-            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            if (dataGridView1.Rows.Count > 0)
             {
-                dataGridView1.Rows.Remove(row);
-                dataGridView1.ClearSelection();
-                cnt += 1;
+                int cnt = 0;
+                int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
+                int totalRows = dataGridView1.Rows.Count;
+                Console.WriteLine("pre {0}: ", rowIndex);
+
+                foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+                {
+                    if (rowIndex != -1)
+                    {
+                        dataGridView1.Rows.Remove(row);
+                        dataGridView1.ClearSelection();
+                        cnt += 1;
+                        Console.WriteLine("post {0}: ", rowIndex);
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                }
+                if (dataGridView1.Rows.Count > 0)
+                {
+                    dataGridView1.Rows[rowIndex].Selected = true;
+                    dgLength();
+                    fileSizeTotal();
+                    textBox3.Text = "";
+                    updatePictureBox();
+                    //pictureBox1.Image = null;
+                    BarExample();
+                }
+                else
+                {
+                    dgLength();
+                    fileSizeTotal();
+                    textBox3.Text = "";
+                    pictureBox1.Image = null;
+                    BarExample();
+                }
+
             }
-            dgLength();
-            fileSizeTotal();
-            textBox3.Text = "";
-            pictureBox1.Image = null;
-            BarExample();
+            else
+            {
+                return;
+            }
+
         }
 
 
@@ -1087,8 +1130,7 @@ namespace photolog
         }
 
 
-
-
+        // Make the Chart
         public void BarExample()
         {
             //float n;
@@ -1110,7 +1152,7 @@ namespace photolog
             chart1.Series.Clear();
             chart1.Titles.Clear();
             chart1.Titles.Add("Image Sizes (MB)");
-            chart1.Palette = ChartColorPalette.Grayscale;
+            chart1.Palette = ChartColorPalette.SeaGreen;
             chart1.ChartAreas[0].AxisX.LabelStyle.Enabled = false;
             chart1.ChartAreas[0].AxisX.Minimum = 0;
             chart1.AlignDataPointsByAxisLabel();
