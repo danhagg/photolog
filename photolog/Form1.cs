@@ -53,8 +53,6 @@ namespace photolog
             this.dataGridView1.DragEnter += new DragEventHandler(dataGridView1_DragEnter);
             this.dataGridView1.AllowDrop = true;
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
-            // declare at form level
-
         }
 
 
@@ -321,8 +319,6 @@ namespace photolog
             int rowIndexOfItemUnderMouseToDrop =
                 dataGridView1.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
 
-            //Console.WriteLine(rowIndexOfItemUnderMouseToDrop);
-
             // Make an array of all files being dragged in
             string[] fileNames = e.Data.GetData(DataFormats.FileDrop) as string[];
             if (fileNames != null && fileNames.Length != 0)
@@ -452,16 +448,11 @@ namespace photolog
                 SelectedRows.Add(dgvr);
             }
             SelectedRows.Sort(DataGridViewRowIndexCompare);
-            //foreach (int value in SelectedRows.Index)
-            //{
-            //    Console.WriteLine(value);
-            //}
 
             for (int i = 0; i <= SelectedRows.Count - 1; i++)
             {
-                //Console.WriteLine(SelectedRows.Count);
                 int selRowIndex = SelectedRows[i].Index;
-                //Console.WriteLine(selRowIndex);
+
                 if (selRowIndex > 0)
                 {
                     dataGridView1.Rows.Remove(SelectedRows[i]);
@@ -592,7 +583,6 @@ namespace photolog
                 int cnt = 0;
                 int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
                 int totalRows = dataGridView1.Rows.Count;
-                Console.WriteLine("pre {0}: ", rowIndex);
 
                 foreach (DataGridViewRow row in dataGridView1.SelectedRows)
                 {
@@ -601,7 +591,6 @@ namespace photolog
                         dataGridView1.Rows.Remove(row);
                         dataGridView1.ClearSelection();
                         cnt += 1;
-                        Console.WriteLine("post {0}: ", rowIndex);
                     }
                     else
                     {
@@ -661,10 +650,6 @@ namespace photolog
                 SelectedRows.Add(dgvr);
             }
             SelectedRows.Sort(DataGridViewRowIndexCompare);
-            //foreach (int value in SelectedRows.Index)
-            //{
-            //    Console.WriteLine(value);
-            //}
 
             for (int i = 0; i <= SelectedRows.Count - 1; i++)
             {
@@ -1142,12 +1127,6 @@ namespace photolog
                 //n = filesize / 1048576;
             }
             float[] pointsArray = points.ToArray();
-
-
-            //foreach (var item in pointsArray)
-            //{            
-            //    Console.WriteLine(item / 1048576);
-            //}
             
             chart1.Series.Clear();
             chart1.Titles.Clear();
@@ -1168,9 +1147,7 @@ namespace photolog
                     chart1.Series[i].Color = Color.Red;
                     chart1.Series[i].Label = (i+1).ToString();
                 }
-
-            }
-            
+            }            
         }
     }
 }
