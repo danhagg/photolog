@@ -104,11 +104,9 @@ namespace photolog
             label5.Text = "PhotoLog Desktop Version: " + version;
         }
 
-
         /*
          MENU OPTIONS
          */
-
 
         // MENU - Save as
         private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -120,16 +118,16 @@ namespace photolog
             //dS.Tables.Add(dT1);
             dS.Tables.Add(dT2);
 
-
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
             saveFileDialog.AddExtension = true;
             saveFileDialog.Title = "Save work as .XML file";
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
+                //dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
+                dS.WriteXml(saveFileDialog.FileName);
                 textBox6.Text = saveFileDialog.FileName;
-                //label7.Text = Path.GetFileName(saveFileDialog.FileName);
+                
             }
         }
 
@@ -157,7 +155,8 @@ namespace photolog
                 saveFileDialog.Title = "Save work as .XML file";
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
+                    //dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
+                    dS.WriteXml(saveFileDialog.FileName);
                     textBox6.Text = saveFileDialog.FileName;
 
                 }
@@ -167,8 +166,8 @@ namespace photolog
                 DataSet dS = new DataSet();
                 System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
                 dS.Tables.Add(dT2);
-                dS.WriteXml(File.Open(path, FileMode.Create));
-
+                //dS.WriteXml(File.Open(path, FileMode.Create));
+                dS.WriteXml(textBox6.Text);
                 AutoClosingMessageBox.Show(textBox6.Text, "Saved", 3000);
             }
         }
@@ -354,6 +353,7 @@ namespace photolog
                             Bitmap bmp1 = new Bitmap(fFull);
                             Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
                             dataGridView1.Rows.Add(row);
+                            
                         }
                     }
                     // For loading into an already populated dataGridView1
@@ -432,14 +432,15 @@ namespace photolog
 
             if (dataGridView1.SelectedRows.Count == 0)
             {
-                if (dataGridView1.CurrentCell.RowIndex > -1)
-                {
-                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
-                }
-                else
-                {
-                    return;
-                }
+                return;
+                //if (dataGridView1.CurrentCell.RowIndex > -1)
+                //{
+                //    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
+                //}
+                //else
+                //{
+                //    return;
+                //}
             }
 
             List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
@@ -455,6 +456,7 @@ namespace photolog
 
                 if (selRowIndex > 0)
                 {
+                    dataGridView1.CurrentCell = dataGridView1.Rows[selRowIndex - 1].Cells[1];
                     dataGridView1.Rows.Remove(SelectedRows[i]);
                     dataGridView1.Rows.Insert(selRowIndex - 1, SelectedRows[i]);
                     dataGridView1.CurrentCell.Selected = false;
@@ -462,8 +464,9 @@ namespace photolog
                 }
                 else
                 {
-                    // if selRowIndex == 0
+                    // if selRowIndex == 0                  
                     return;
+                    
                 }
             }
             /*
@@ -483,14 +486,15 @@ namespace photolog
 
             if (dataGridView1.SelectedRows.Count == 0)
             {
-                if (dataGridView1.CurrentCell.RowIndex > -1)
-                {
-                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
-                }
-                else
-                {
-                    return;
-                }
+                return;
+                //if (dataGridView1.CurrentCell.RowIndex > -1)
+                //{
+                //    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
+                //}
+                //else
+                //{
+                //    return;
+                //}
             }
 
             List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
@@ -507,10 +511,11 @@ namespace photolog
                 //if ((selRowIndex <= dataGridView1.Rows.Count - 1) && (!(selRowIndex == dataGridView1.Rows.Count - 1)))
                 if (selRowIndex < dataGridView1.Rows.Count - 1)
                 {
-                    dataGridView1.Rows.Remove(SelectedRows[i]);
+                    dataGridView1.Rows.Remove(SelectedRows[i]);                   
                     dataGridView1.Rows[selRowIndex].Selected = false;
                     dataGridView1.Rows.Insert(selRowIndex + 1, SelectedRows[i]);
                     dataGridView1.Rows[selRowIndex + 1].Selected = true;
+                    //dataGridView1.CurrentCell = dataGridView1.Rows[selRowIndex + 1].Cells[1];
                 }
                 else
                 {
@@ -864,7 +869,6 @@ namespace photolog
         }
 
 
-
         // BUTTON - Rotate Image
         private void button1_Click_2(object sender, EventArgs e)
         {
@@ -878,7 +882,6 @@ namespace photolog
         }
 
 
-
         // METHOD - Rotate Image
         public Image RotateImage()
         {
@@ -888,9 +891,6 @@ namespace photolog
             bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
             return pictureBox1.Image = bmp;
         }
-
-
-
 
 
         // METHOD - Calculate Image size
