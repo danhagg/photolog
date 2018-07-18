@@ -57,16 +57,20 @@ namespace photolog
         // Set Form listView and datGridView properties on load
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Load += new EventHandler(Form1_Load);
-
             // form resizing
+            this.Load += new EventHandler(Form1_Load);
+            this.AutoSize = true;
+            this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.SizeGripStyle = SizeGripStyle.Auto;
+            this.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
             //dataGridView1.MinimumSize = new Size(628, 879);
             dataGridView1.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
             //windows statemaximized
             // Turn off form resizing and maximize
             //FormBorderStyle = FormBorderStyle.FixedSingle;
-            //MaximizeBox = false;
+            MaximizeBox = false;
 
             // dataGridView1
             dataGridView1.RowTemplate.Height = 64;
@@ -90,7 +94,7 @@ namespace photolog
 
             ToolTip toolTip1 = new ToolTip();
             toolTip1.SetToolTip(button2, "Make a Word document");
-            toolTip1.SetToolTip(button1, "Rotation is only saved in your photolog project and NOT to your computer's file system");
+            //toolTip1.SetToolTip(button1, "Rotation is only saved in your photolog project and NOT to your computer's file system");
 
 
             // Chart
@@ -705,9 +709,10 @@ namespace photolog
                         //dataGridView1.Rows[0].Selected = true;
                         dgLength();
                         fileSizeTotal();
+                        textBox2.Text = "";
                         textBox3.Text = "";
+                        textBox4.Text = "";
                         pictureBox1.Image = null;
-                        //updatePictureBox();
                         BarExample();
                     }
                     else
@@ -716,8 +721,9 @@ namespace photolog
                         dataGridView1.ClearSelection();
                         dgLength();
                         fileSizeTotal();
+                        textBox2.Text = "";
                         textBox3.Text = "";
-                        //updatePictureBox();
+                        textBox4.Text = "";
                         pictureBox1.Image = null;
                         BarExample();
                     }
@@ -725,8 +731,16 @@ namespace photolog
             }
             else
             {
+                dgLength();
+                textBox2.Text = "";
+                textBox3.Text = "";
+                textBox4.Text = "";
+                pictureBox1.Image = null;
+                BarExample();
                 return;
             }
+
+            
         }
 
 
@@ -962,6 +976,7 @@ namespace photolog
                             }
                             resizedImage = new Bitmap(img, newWidth, newHeight);
                             pictureBox1.Image = resizedImage;
+                            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
                             textBox4.Text = txt;
                         }
                         // Use default image viewer
@@ -1244,7 +1259,7 @@ namespace photolog
                 if (pointsArray[i] >= 2)
                 {
                     chart1.Series[i].Color = Color.Red;
-                    //chart1.Series[i].Label = (i+1).ToString();
+                    chart1.Series[i].Label = (i+1).ToString();
                 }
             }            
         }
