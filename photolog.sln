@@ -6,12 +6,17 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "photolog", "photolog\photolog.csproj", "{58958FA9-C66E-4DB0-8C8D-EF328F2E5614}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{84A9F6D0-B04C-45C1-BE5C-187B32BAAA2A}"
+	ProjectSection(SolutionItems) = preProject
+		photolog\bin\v0.10\en-US.oxt = photolog\bin\v0.10\en-US.oxt
+		photolog\bin\v0.10\en_US.aff = photolog\bin\v0.10\en_US.aff
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 		v0.1|Any CPU = v0.1|Any CPU
+		v0.10|Any CPU = v0.10|Any CPU
 		v0.2|Any CPU = v0.2|Any CPU
 		v0.3|Any CPU = v0.3|Any CPU
 		v0.4|Any CPU = v0.4|Any CPU
@@ -28,6 +33,8 @@ Global
 		{58958FA9-C66E-4DB0-8C8D-EF328F2E5614}.Release|Any CPU.Build.0 = Release|Any CPU
 		{58958FA9-C66E-4DB0-8C8D-EF328F2E5614}.v0.1|Any CPU.ActiveCfg = v0.1|Any CPU
 		{58958FA9-C66E-4DB0-8C8D-EF328F2E5614}.v0.1|Any CPU.Build.0 = v0.1|Any CPU
+		{58958FA9-C66E-4DB0-8C8D-EF328F2E5614}.v0.10|Any CPU.ActiveCfg = v0.10|Any CPU
+		{58958FA9-C66E-4DB0-8C8D-EF328F2E5614}.v0.10|Any CPU.Build.0 = v0.10|Any CPU
 		{58958FA9-C66E-4DB0-8C8D-EF328F2E5614}.v0.2|Any CPU.ActiveCfg = v0.2|Any CPU
 		{58958FA9-C66E-4DB0-8C8D-EF328F2E5614}.v0.2|Any CPU.Build.0 = v0.2|Any CPU
 		{58958FA9-C66E-4DB0-8C8D-EF328F2E5614}.v0.3|Any CPU.ActiveCfg = v0.3|Any CPU
