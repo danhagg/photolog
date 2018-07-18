@@ -365,9 +365,6 @@ namespace photolog
         }
 
 
-
-
-
         // Paint the row headers
         private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
@@ -397,12 +394,68 @@ namespace photolog
                 // Which files "collide"
                 var intersection = array0.Intersect(fileNames);
 
+                string[] remainderTransfer = fileNames.Where(x => !intersection.Contains(x)).ToArray();
+
                 // If collisions exist
                 if (intersection.Count() > 0)
                 {
-                    StringBuilder sb = new StringBuilder("The following file(s) are already in the list: \n");
+                    // For loading into an empty dataGridView1
+                    if (dataGridView1.Rows.Count == 0)
+                    {
+                        for (int i = 0; i < fileNames.Length; i++)
+                        {
+                            string fFull = Path.GetFullPath(fileNames[i]);
+                            string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
+                            Bitmap bmp1 = new Bitmap(fFull);
+                            Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
+                            dataGridView1.Rows.Add(row);
 
+                        }
+                    }
+                    // For loading into an already populated dataGridView1
+                    else
+                    {
+                        if (rowIndexOfItemUnderMouseToDrop == -1)
+                        {
+                            int totalRows = dataGridView1.Rows.Count;
+                            for (int i = 0; i < fileNames.Length; i++)
+                            {
+                                string fFull = Path.GetFullPath(fileNames[i]);
+                                string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
+                                Bitmap bmp1 = new Bitmap(fFull);
+                                Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
+                                // Add at index under mouse for first and + i for rest
+                                dataGridView1.Rows.Insert(totalRows + i, row);
+                            }
+                            // Move highlighted + slected to top of that index
+                            //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
+                            dataGridView1.CurrentCell = this.dataGridView1[1, totalRows];
+                        }
+                        else
+                        {
+                            for (int i = 0; i < fileNames.Length; i++)
+                            {
+                                string fFull = Path.GetFullPath(fileNames[i]);
+                                string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
+                                Bitmap bmp1 = new Bitmap(fFull);
+                                Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
+                                // Add at index under mouse for first and + i for rest
+                                dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);
+                            }
+                            // Move highlighted + slected to top of that index
+                            //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
+                            dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
+                        }
+
+                    }
+                    StringBuilder sb = new StringBuilder("The following file(s) are already present in the list and were NOT inserted: \n\n");
                     foreach (string id in intersection)
+                    {
+                        sb.Append(id + "\n");
+
+                    }
+                    sb.Append("However, \n\n" + "The following file(s) WERE inserted: \n\n");
+                    foreach (string id in remainderTransfer)
                     {
                         sb.Append(id + "\n");
                     }
