@@ -11,6 +11,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using NHunspell;
 
 namespace photolog
 {
@@ -53,6 +54,7 @@ namespace photolog
             this.dataGridView1.DragEnter += new DragEventHandler(dataGridView1_DragEnter);
             this.dataGridView1.AllowDrop = true;
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
+
         }
 
 
@@ -237,6 +239,72 @@ namespace photolog
 
 
         // MENU - Change My parent folder
+        private void changeParentFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "XML Files (*.xml)|*.xml";
+            ofd.FilterIndex = 1;
+            ofd.Title = "Select temp file. The temp file must be in same folder as your images for this to work.";
+
+            // check user selects pass
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                string xmlFileName = ofd.FileName;
+                // For updating textBox
+                string xmlFile = Path.GetFileName(xmlFileName);
+                string xmlFileDirectory = Path.GetDirectoryName(xmlFileName);
+                //MessageBox.Show(xmlFileDirectory);
+
+                dataGridView1.Rows.Clear();
+
+                // Read and load info from XML 
+                XDocument doc = XDocument.Load(xmlFileName);
+                if (doc.Root.Elements().Any())
+                {
+                    try
+                    {
+                        foreach (var dm2 in doc.Descendants("Table1"))
+                        {
+                            string fileName = dm2.Element("fileName").Value;
+                            string temp = dm2.Element("dataGridView1Path").Value.ToString();
+                            string file_ext = Path.GetFileName(temp);
+                            string fileNameFull = xmlFileDirectory + '\\' + file_ext;
+                            //MessageBox.Show(fileNameFull);
+                            Image img = Image.FromFile(fileNameFull);
+                            var capt = dm2.Element("dataGridView1Caption").Value;
+                            var pth = fileNameFull;
+                            dataGridView1.Rows.Add(fileName, img, capt, pth);
+                        }
+                        dgLength();
+                        dgLength();
+                        capLength();
+                        fileSize();
+                        fileSizeTotal();
+                        updatePictureBox();
+                        textBox6.Text = xmlFileName;
+                        BarExample();
+                    }
+                    // Error
+                    catch (Exception exc)
+                    {
+                        StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
+                        myStringBuilder.Append(xmlFileName + "\n\n");
+                        myStringBuilder.Append("The saved project tried to load the following file: \n\n");
+                        myStringBuilder.Append(exc.Message + "\n\n");
+                        myStringBuilder.Append("But this file does not exist in this folder location. Have you perhaps moved it? Or has it been renamed? \n\n");
+                        MessageBox.Show(myStringBuilder.ToString());
+                    }
+                }
+                else
+                {
+                    StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
+                    myStringBuilder.Append(xmlFileName + "\n\n");
+                    myStringBuilder.Append("But this file is empty. \n\n");
+                    MessageBox.Show(myStringBuilder.ToString());
+                }
+            }
+
+        }
 
 
         // Overlay file name on top of image      
@@ -798,7 +866,7 @@ namespace photolog
                 {
 
                     pictureBox1.Image = null;
-
+                    textBox4.Text = txt;
                     StringBuilder myStringBuilder = new StringBuilder("This image exceeds 5 MB: \n\n");
                     myStringBuilder.Append(txt + "\n\n");
                     myStringBuilder.Append("It may cause problems if the Photolog app tries to view it. \n\n" +
@@ -1141,6 +1209,21 @@ namespace photolog
                 }
             }            
         }
+
+
+            /*
+            private void button5_Click(object sender, EventArgs e)
+            {
+                Hunspell hunspell = new Hunspell("en_US.aff", "en_US.oxt");
+                Console.WriteLine("Let's determine if technical is spelled correctly.");
+
+
+                bool check = hunspell.Spell("yes");
+
+
+                Console.WriteLine("The word (technical) is " + (check ? "right." : "wrong."));
+            }
+            */
     }
 }
 
