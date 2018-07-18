@@ -25,21 +25,17 @@ namespace photolog
 
             //Create right click menu using contextmenustrip for right click move top bottom
             ContextMenuStrip s = new ContextMenuStrip();
-
             // add one right click menu item named as top and bottom          
             ToolStripMenuItem top = new ToolStripMenuItem();
             ToolStripMenuItem bottom = new ToolStripMenuItem();
             top.Text = "Send to TOP";
             bottom.Text = "Send to BOTTOM";
-
             // add the clickevent of hello item
             top.Click += top_Click;
             bottom.Click += bottom_Click;
-
             // add the item in right click menu
             s.Items.Add(top);
             s.Items.Add(bottom);
-
             // attach the right click menu with form
             this.ContextMenuStrip = s;
 
@@ -64,9 +60,13 @@ namespace photolog
             this.Load += new EventHandler(Form1_Load);
 
             // form resizing
+            //dataGridView1.MinimumSize = new Size(628, 879);
+            dataGridView1.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+
+            //windows statemaximized
             // Turn off form resizing and maximize
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            MaximizeBox = false;
+            //FormBorderStyle = FormBorderStyle.FixedSingle;
+            //MaximizeBox = false;
 
             // dataGridView1
             dataGridView1.RowTemplate.Height = 64;
@@ -336,35 +336,6 @@ namespace photolog
         }
 
 
-        // Overlay file name on top of image      
-        private void pictureBox1_CellPainting(object sender,
-                                DataGridViewCellPaintingEventArgs e)
-        {
-            if (e.RowIndex < 0) return;                  // no image in the header
-            if (e.ColumnIndex == this.dataGridView1.Columns["imageColumn"].Index)
-
-            {
-                e.PaintBackground(e.ClipBounds, false);  // no highlighting
-                e.PaintContent(e.ClipBounds);
-
-                // calculate the location of your text..:
-                int y = e.CellBounds.Bottom - 17;         // your  font height
-
-                string mystring = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
-                var result = mystring.Substring(mystring.Length - Math.Min(4, mystring.Length));
-
-                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(e.CellBounds.Location.X + 1, e.CellBounds.Location.Y + 49, 35, 14);
-                e.Graphics.FillRectangle(Brushes.White, rect);
-
-                e.Graphics.DrawString(result, e.CellStyle.Font,
-                Brushes.Crimson, e.CellBounds.Left, y);
-
-                //e.PaintContent(rect);
-                e.Handled = true;                        // done with the image column 
-            }
-        }
-
-
         // Paint the row headers
         private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
@@ -399,70 +370,67 @@ namespace photolog
                 // If collisions exist
                 if (intersection.Count() > 0)
                 {
-                    // For loading into an empty dataGridView1
-                    if (dataGridView1.Rows.Count == 0)
+                    // drop is into empty row
+                    if (rowIndexOfItemUnderMouseToDrop == -1)
                     {
-                        for (int i = 0; i < fileNames.Length; i++)
+                        int totalRows = dataGridView1.Rows.Count;
+                        for (int i = 0; i < remainderTransfer.Length; i++)
                         {
-                            string fFull = Path.GetFullPath(fileNames[i]);
-                            string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
+                            string fFull = Path.GetFullPath(remainderTransfer[i]);
+                            string fileNam = Path.GetFileNameWithoutExtension(remainderTransfer[i]);
                             Bitmap bmp1 = new Bitmap(fFull);
                             Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
-                            dataGridView1.Rows.Add(row);
-
+                            // Add at index under mouse for first and + i for rest
+                            dataGridView1.Rows.Insert(totalRows + i, row);
                         }
+                        dataGridView1.CurrentCell = this.dataGridView1[1, totalRows];
+                        dgLength();
+                        capLength();
+                        fileSize();
+                        fileSizeTotal();
+                        updatePictureBox();
+                        BarExample();
+                        //MessageBox.Show("clash + to empty row");
                     }
-                    // For loading into an already populated dataGridView1
+                    // drop into existing row
                     else
                     {
-                        if (rowIndexOfItemUnderMouseToDrop == -1)
+                        for (int i = 0; i < remainderTransfer.Length; i++)
                         {
-                            int totalRows = dataGridView1.Rows.Count;
-                            for (int i = 0; i < fileNames.Length; i++)
-                            {
-                                string fFull = Path.GetFullPath(fileNames[i]);
-                                string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
-                                Bitmap bmp1 = new Bitmap(fFull);
-                                Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
-                                // Add at index under mouse for first and + i for rest
-                                dataGridView1.Rows.Insert(totalRows + i, row);
-                            }
-                            // Move highlighted + slected to top of that index
-                            //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
-                            dataGridView1.CurrentCell = this.dataGridView1[1, totalRows];
+                            string fFull = Path.GetFullPath(remainderTransfer[i]);
+                            string fileNam = Path.GetFileNameWithoutExtension(remainderTransfer[i]);
+                            Bitmap bmp1 = new Bitmap(fFull);
+                            Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
+                            // Add at index under mouse for first and + i for rest
+                            dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);
                         }
-                        else
-                        {
-                            for (int i = 0; i < fileNames.Length; i++)
-                            {
-                                string fFull = Path.GetFullPath(fileNames[i]);
-                                string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
-                                Bitmap bmp1 = new Bitmap(fFull);
-                                Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
-                                // Add at index under mouse for first and + i for rest
-                                dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);
-                            }
-                            // Move highlighted + slected to top of that index
-                            //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
-                            dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
-                        }
-
+                        // Move highlighted + slected to top of that index
+                        //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
+                        dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
+                        dgLength();
+                        capLength();
+                        fileSize();
+                        fileSizeTotal();
+                        updatePictureBox();
+                        BarExample();
+                        //MessageBox.Show("clash + to occupied row");                       
                     }
+
+                    // whether copied clashes are to empty or occupied rows the following Message Box is called
                     StringBuilder sb = new StringBuilder("The following file(s) are already present in the list and were NOT inserted: \n\n");
                     foreach (string id in intersection)
                     {
                         sb.Append(id + "\n");
 
                     }
-                    sb.Append("However, \n\n" + "The following file(s) WERE inserted: \n\n");
+                    sb.Append("\nHowever, \n\n" + "The following file(s) WERE inserted: \n\n");
                     foreach (string id in remainderTransfer)
                     {
                         sb.Append(id + "\n");
                     }
-                    MessageBox.Show(sb.ToString());
+                    //MessageBox.Show(sb.ToString());
                 }
                 else
-                // Otherwise load the files
                 {
                     // For loading into an empty dataGridView1
                     if (dataGridView1.Rows.Count == 0)
@@ -474,10 +442,16 @@ namespace photolog
                             Bitmap bmp1 = new Bitmap(fFull);
                             Object[] row = new object[] { fileNam, bmp1, "Insert caption here", fFull };
                             dataGridView1.Rows.Add(row);
-                            
                         }
+                        dgLength();
+                        capLength();
+                        fileSize();
+                        fileSizeTotal();
+                        updatePictureBox();
+                        BarExample();
+                        //MessageBox.Show("copy to empty");
                     }
-                    // For loading into an already populated dataGridView1
+                    // For loading into an already populated dataGridView1 at empty row
                     else
                     {
                         if (rowIndexOfItemUnderMouseToDrop == -1)
@@ -495,7 +469,17 @@ namespace photolog
                             // Move highlighted + slected to top of that index
                             //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
                             dataGridView1.CurrentCell = this.dataGridView1[1, totalRows];
+
+                            dgLength();
+                            capLength();
+                            fileSize();
+                            fileSizeTotal();
+                            updatePictureBox();
+                            BarExample();
+                            //MessageBox.Show("copy to populated empty cell");
+
                         }
+                        // For loading into an already populated dataGridView1 at occupied row
                         else
                         {
                             for (int i = 0; i < fileNames.Length; i++)
@@ -510,18 +494,20 @@ namespace photolog
                             // Move highlighted + slected to top of that index
                             //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
                             dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
+                            dgLength();
+                            capLength();
+                            fileSize();
+                            fileSizeTotal();
+                            updatePictureBox();
+                            BarExample();
+                            //MessageBox.Show("copy to populated occupied cell");
                         }
-
                     }
-                }
-                dgLength();
-                capLength();
-                fileSize();
-                fileSizeTotal();
-                updatePictureBox();
-                BarExample();
-            }
+                }             
+            }       
         }
+
+
 
 
         // Allows the left and right click to highlight a row in dataGridView1
@@ -1258,7 +1244,7 @@ namespace photolog
                 if (pointsArray[i] >= 2)
                 {
                     chart1.Series[i].Color = Color.Red;
-                    chart1.Series[i].Label = (i+1).ToString();
+                    //chart1.Series[i].Label = (i+1).ToString();
                 }
             }            
         }
