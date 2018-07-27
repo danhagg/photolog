@@ -535,106 +535,35 @@ namespace photolog
         }
 
 
+        // Key Up and Down
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Up)
+            {
+                moveUp();
+                return true;
+            }
+            else if (keyData == Keys.Down)
+            {
+                moveDown();
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+        
+
         // BUTTON UP
         private void button3_Click_1(object sender, EventArgs e)
         {
-
-            if (dataGridView1.Rows.Count == 0) return;
-
-            if (dataGridView1.SelectedRows.Count == 0)
-            {
-                return;
-                //if (dataGridView1.CurrentCell.RowIndex > -1)
-                //{
-                //    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
-                //}
-                //else
-                //{
-                //    return;
-                //}
-            }
-
-            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
-            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
-            {
-                SelectedRows.Add(dgvr);
-            }
-            SelectedRows.Sort(DataGridViewRowIndexCompare);
-
-            for (int i = 0; i <= SelectedRows.Count - 1; i++)
-            {
-                int selRowIndex = SelectedRows[i].Index;
-
-                if (selRowIndex > 0)
-                {
-                    dataGridView1.CurrentCell = dataGridView1.Rows[selRowIndex - 1].Cells[1];
-                    dataGridView1.Rows.Remove(SelectedRows[i]);
-                    dataGridView1.Rows.Insert(selRowIndex - 1, SelectedRows[i]);
-                    dataGridView1.CurrentCell.Selected = false;
-                    dataGridView1.Rows[selRowIndex - 1].Selected = true;
-                }
-                else
-                {
-                    // if selRowIndex == 0                  
-                    return;
-                    
-                }
-            }
-            /*
-            if (dataGridView1.SelectedRows.Count == 1)
-            {
-                dataGridView1.CurrentCell = dataGridView1.Rows[SelectedRows[0].Index].Cells[0];
-            }*/
-            scrollGrid();
-            BarExample();
+            moveUp();           
         }
 
 
         // BUTTON DOWN
         private void button4_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.Rows.Count == 0) return;
-
-            if (dataGridView1.SelectedRows.Count == 0)
-            {
-                return;
-                //if (dataGridView1.CurrentCell.RowIndex > -1)
-                //{
-                //    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
-                //}
-                //else
-                //{
-                //    return;
-                //}
-            }
-
-            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
-            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
-            {
-                SelectedRows.Add(dgvr);
-            }
-
-            SelectedRows.Sort(DataGridViewRowIndexCompare);
-
-            for (int i = SelectedRows.Count - 1; i >= 0; i--)
-            {
-                int selRowIndex = SelectedRows[i].Index;
-                //if ((selRowIndex <= dataGridView1.Rows.Count - 1) && (!(selRowIndex == dataGridView1.Rows.Count - 1)))
-                if (selRowIndex < dataGridView1.Rows.Count - 1)
-                {
-                    dataGridView1.Rows.Remove(SelectedRows[i]);                   
-                    dataGridView1.Rows[selRowIndex].Selected = false;
-                    dataGridView1.Rows.Insert(selRowIndex + 1, SelectedRows[i]);
-                    dataGridView1.Rows[selRowIndex + 1].Selected = true;
-                    //dataGridView1.CurrentCell = dataGridView1.Rows[selRowIndex + 1].Cells[1];
-                }
-                else
-                {
-                    return;
-                }
-            }
-            scrollGrid();
-            BarExample();
+            moveDown();
         }
 
 
@@ -1265,19 +1194,123 @@ namespace photolog
         }
 
 
-            /*
-            private void button5_Click(object sender, EventArgs e)
+        /*
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Hunspell hunspell = new Hunspell("en_US.aff", "en_US.oxt");
+            Console.WriteLine("Let's determine if technical is spelled correctly.");
+
+
+            bool check = hunspell.Spell("yes");
+
+
+            Console.WriteLine("The word (technical) is " + (check ? "right." : "wrong."));
+        }
+        */
+
+
+        // MOVE UP FUNCTION
+        private void moveUp()
+        {
+
+            if (dataGridView1.Rows.Count == 0) return;
+
+            if (dataGridView1.SelectedRows.Count == 0)
             {
-                Hunspell hunspell = new Hunspell("en_US.aff", "en_US.oxt");
-                Console.WriteLine("Let's determine if technical is spelled correctly.");
-
-
-                bool check = hunspell.Spell("yes");
-
-
-                Console.WriteLine("The word (technical) is " + (check ? "right." : "wrong."));
+                return;
+                //if (dataGridView1.CurrentCell.RowIndex > -1)
+                //{
+                //    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
+                //}
+                //else
+                //{
+                //    return;
+                //}
             }
-            */
+
+            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
+            {
+                SelectedRows.Add(dgvr);
+            }
+            SelectedRows.Sort(DataGridViewRowIndexCompare);
+
+            for (int i = 0; i <= SelectedRows.Count - 1; i++)
+            {
+                int selRowIndex = SelectedRows[i].Index;
+
+                if (selRowIndex > 0)
+                {
+                    dataGridView1.CurrentCell = dataGridView1.Rows[selRowIndex - 1].Cells[1];
+                    dataGridView1.Rows.Remove(SelectedRows[i]);
+                    dataGridView1.Rows.Insert(selRowIndex - 1, SelectedRows[i]);
+                    dataGridView1.CurrentCell.Selected = false;
+                    dataGridView1.Rows[selRowIndex - 1].Selected = true;
+                }
+                else
+                {
+                    // if selRowIndex == 0                  
+                    return;
+
+                }
+            }
+            /*
+            if (dataGridView1.SelectedRows.Count == 1)
+            {
+                dataGridView1.CurrentCell = dataGridView1.Rows[SelectedRows[0].Index].Cells[0];
+            }*/
+            scrollGrid();
+            BarExample();
+        }
+
+
+        private void moveDown()
+        {
+            if (dataGridView1.Rows.Count == 0) return;
+
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                return;
+                //if (dataGridView1.CurrentCell.RowIndex > -1)
+                //{
+                //    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
+                //}
+                //else
+                //{
+                //    return;
+                //}
+            }
+
+            List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow dgvr in dataGridView1.SelectedRows)
+            {
+                SelectedRows.Add(dgvr);
+            }
+
+            SelectedRows.Sort(DataGridViewRowIndexCompare);
+
+            for (int i = SelectedRows.Count - 1; i >= 0; i--)
+            {
+                int selRowIndex = SelectedRows[i].Index;
+                //if ((selRowIndex <= dataGridView1.Rows.Count - 1) && (!(selRowIndex == dataGridView1.Rows.Count - 1)))
+                if (selRowIndex < dataGridView1.Rows.Count - 1)
+                {
+                    dataGridView1.Rows.Remove(SelectedRows[i]);
+                    dataGridView1.Rows[selRowIndex].Selected = false;
+                    dataGridView1.Rows.Insert(selRowIndex + 1, SelectedRows[i]);
+                    dataGridView1.Rows[selRowIndex + 1].Selected = true;
+                    //dataGridView1.CurrentCell = dataGridView1.Rows[selRowIndex + 1].Cells[1];
+                }
+                else
+                {
+                    return;
+                }
+            }
+            scrollGrid();
+            BarExample();
+        }
+       
+        
     }
 }
 
