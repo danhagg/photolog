@@ -27,14 +27,18 @@ namespace photolog
             ContextMenuStrip s = new ContextMenuStrip();
             // add one right click menu item named as top and bottom          
             ToolStripMenuItem top = new ToolStripMenuItem();
+            //ToolStripMenuItem middle = new ToolStripMenuItem();
             ToolStripMenuItem bottom = new ToolStripMenuItem();
             top.Text = "Send to TOP";
+            //middle.Text = "Send to MIDDLE";
             bottom.Text = "Send to BOTTOM";
             // add the clickevent of hello item
             top.Click += top_Click;
+            //middle.Click += middle_Click;
             bottom.Click += bottom_Click;
             // add the item in right click menu
             s.Items.Add(top);
+            //s.Items.Add(middle);
             s.Items.Add(bottom);
             // attach the right click menu with form
             this.ContextMenuStrip = s;
@@ -178,67 +182,78 @@ namespace photolog
             }
         }
 
+        //private void addMultipleTempFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void addMultipleTempFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            resume(sender, e);
+            //MessageBox.Show(sender.ToString());
+            //MessageBox.Show(e.ToString());
+        }
 
         // MENU - Resume
+        //private void resumeToolStripMenuItem_Click(object sender, EventArgs e)
         private void resumeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "XML Files (*.xml)|*.xml";
-            ofd.FilterIndex = 1;
+            resume(sender, e);
+            //MessageBox.Show(sender.ToString());
+            //MessageBox.Show(e.ToString());
+            //OpenFileDialog ofd = new OpenFileDialog();
+            //ofd.Filter = "XML Files (*.xml)|*.xml";
+            //ofd.FilterIndex = 1;
 
-            // check user selects pass
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                string xmlFileName = ofd.FileName;
-                // For updating textBox
-                string xmlFile = Path.GetFileName(xmlFileName);
-                //label7.Text = xmlFile;
+            //// check user selects pass
+            //if (ofd.ShowDialog() == DialogResult.OK)
+            //{
+            //    string xmlFileName = ofd.FileName;
+            //    // For updating textBox
+            //    string xmlFile = Path.GetFileName(xmlFileName);
+            //    //label7.Text = xmlFile;
 
-                dataGridView1.Rows.Clear();
+            //    dataGridView1.Rows.Clear();
 
-                // Read and load info from XML 
-                XDocument doc = XDocument.Load(xmlFileName);
-                if (doc.Root.Elements().Any())
-                {
-                    try
-                    {
-                        foreach (var dm2 in doc.Descendants("Table1"))
-                        {
-                            string fileName = dm2.Element("fileName").Value;
-                            string fileNameFull = dm2.Element("dataGridView1Path").Value.ToString();
-                            Image img = Image.FromFile(dm2.Element("dataGridView1Path").Value.ToString());
-                            var capt = dm2.Element("dataGridView1Caption").Value;
-                            var pth = dm2.Element("dataGridView1Path").Value;
-                            dataGridView1.Rows.Add(fileName, img, capt, pth);
-                        }
-                        dgLength();
-                        dgLength();
-                        capLength();
-                        fileSize();
-                        fileSizeTotal();
-                        updatePictureBox();
-                        textBox6.Text = xmlFileName;
-                        BarExample();
-                    }
-                    // Error
-                    catch (Exception exc)
-                    {
-                        StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
-                        myStringBuilder.Append(xmlFileName + "\n\n");
-                        myStringBuilder.Append("The saved project tried to load the following file: \n\n");
-                        myStringBuilder.Append(exc.Message + "\n\n");
-                        myStringBuilder.Append("But this file does not exist in this folder location. Have you perhaps moved it? Or has it been renamed? \n\n");
-                        MessageBox.Show(myStringBuilder.ToString());
-                    }
-                }
-                else
-                {
-                    StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
-                    myStringBuilder.Append(xmlFileName + "\n\n");
-                    myStringBuilder.Append("But this file is empty. \n\n");
-                    MessageBox.Show(myStringBuilder.ToString());
-                }
-            }
+            //    // Read and load info from XML 
+            //    XDocument doc = XDocument.Load(xmlFileName);
+            //    if (doc.Root.Elements().Any())
+            //    {
+            //        try
+            //        {
+            //            foreach (var dm2 in doc.Descendants("Table1"))
+            //            {
+            //                string fileName = dm2.Element("fileName").Value;
+            //                string fileNameFull = dm2.Element("dataGridView1Path").Value.ToString();
+            //                Image img = Image.FromFile(dm2.Element("dataGridView1Path").Value.ToString());
+            //                var capt = dm2.Element("dataGridView1Caption").Value;
+            //                var pth = dm2.Element("dataGridView1Path").Value;
+            //                dataGridView1.Rows.Add(fileName, img, capt, pth);
+            //            }
+            //            dgLength();
+            //            dgLength();
+            //            capLength();
+            //            fileSize();
+            //            fileSizeTotal();
+            //            updatePictureBox();
+            //            textBox6.Text = xmlFileName;
+            //            BarExample();
+            //        }
+            //        // Error
+            //        catch (Exception exc)
+            //        {
+            //            StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
+            //            myStringBuilder.Append(xmlFileName + "\n\n");
+            //            myStringBuilder.Append("The saved project tried to load the following file: \n\n");
+            //            myStringBuilder.Append(exc.Message + "\n\n");
+            //            myStringBuilder.Append("But this file does not exist in this folder location. Have you perhaps moved it? Or has it been renamed? \n\n");
+            //            MessageBox.Show(myStringBuilder.ToString());
+            //        }
+            //    }
+            //    else
+            //    {
+            //        StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
+            //        myStringBuilder.Append(xmlFileName + "\n\n");
+            //        myStringBuilder.Append("But this file is empty. \n\n");
+            //        MessageBox.Show(myStringBuilder.ToString());
+            //    }
+            //}
         }
 
 
@@ -346,6 +361,7 @@ namespace photolog
             using (SolidBrush b = new SolidBrush(dataGridView1.RowHeadersDefaultCellStyle.ForeColor))
             {
                 e.Graphics.DrawString((e.RowIndex + 1).ToString(), e.InheritedRowStyle.Font, b, e.RowBounds.Location.X + 10, e.RowBounds.Location.Y + 4);
+                //e.Graphics.DrawString((e.RowIndex + 10).ToString(), e.InheritedRowStyle.Font, b, e.RowBounds.Location.X + 10, e.RowBounds.Location.Y + 4);
             }
         }
 
@@ -374,6 +390,18 @@ namespace photolog
                 // If collisions exist
                 if (intersection.Count() > 0)
                 {
+                    StringBuilder sb = new StringBuilder("The following file(s) are already present in the list and were NOT inserted: \n\n");
+                    foreach (string id in intersection)
+                    {
+                        sb.Append(id + "\n");
+
+                    }
+                    sb.Append("\nHowever, \n\n" + "The following file(s) WERE inserted: \n\n");
+                    foreach (string id in remainderTransfer)
+                    {
+                        sb.Append(id + "\n");
+                    }
+                    MessageBox.Show(sb.ToString());
                     // drop is into empty row
                     if (rowIndexOfItemUnderMouseToDrop == -1)
                     {
@@ -394,7 +422,7 @@ namespace photolog
                         fileSizeTotal();
                         updatePictureBox();
                         BarExample();
-                        //MessageBox.Show("clash + to empty row");
+
                     }
                     // drop into existing row
                     else
@@ -417,22 +445,8 @@ namespace photolog
                         fileSizeTotal();
                         updatePictureBox();
                         BarExample();
-                        //MessageBox.Show("clash + to occupied row");                       
-                    }
-
-                    // whether copied clashes are to empty or occupied rows the following Message Box is called
-                    StringBuilder sb = new StringBuilder("The following file(s) are already present in the list and were NOT inserted: \n\n");
-                    foreach (string id in intersection)
-                    {
-                        sb.Append(id + "\n");
 
                     }
-                    sb.Append("\nHowever, \n\n" + "The following file(s) WERE inserted: \n\n");
-                    foreach (string id in remainderTransfer)
-                    {
-                        sb.Append(id + "\n");
-                    }
-                    //MessageBox.Show(sb.ToString());
                 }
                 else
                 {
@@ -1102,8 +1116,10 @@ namespace photolog
                     rngTarget1.Font.Name = "Tahoma";
                     object anchor = rngTarget1;
 
+                    //int paraStartNumber = 4;
+                    
                     rngTarget0.ListFormat.ApplyNumberDefault();
-
+                    //rngTarget0.ListFormat.
 
                     // Get image path and caption from dataGridView
                     string fileName1 = DGV.Rows[i].Cells[3].Value.ToString();
@@ -1207,6 +1223,125 @@ namespace photolog
             Console.WriteLine("The word (technical) is " + (check ? "right." : "wrong."));
         }
         */
+        // RESUME FUNCTION
+        private void resume(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "XML Files (*.xml)|*.xml";
+            ofd.FilterIndex = 1;
+
+            // check user selects pass
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                string xmlFileName = ofd.FileName;
+                // For updating textBox
+                string xmlFile = Path.GetFileName(xmlFileName);
+                //label7.Text = xmlFile;
+                if (sender.ToString() == "Resume")
+                {
+                    dataGridView1.Rows.Clear();
+                }
+                else
+                {
+                    // empty braces == Python pass                
+                }
+
+                var array0 = dataGridView1.Rows.Cast<DataGridViewRow>()
+                                             .Select(x => x.Cells[3].Value.ToString().Trim()).ToArray();
+                //string[] collisions = { };
+                List<string> collisions = new List<string>();
+
+
+                // Read and load info from XML 
+                XDocument doc = XDocument.Load(xmlFileName);
+                if (doc.Root.Elements().Any())
+                {
+                    try
+                    {
+                        foreach (var dm2 in doc.Descendants("Table1"))
+                        {
+                            string fileName = dm2.Element("fileName").Value;
+                            string fileNameFull = dm2.Element("dataGridView1Path").Value.ToString();
+
+                            bool contains = array0.Contains(fileNameFull, StringComparer.OrdinalIgnoreCase);
+                            if (contains == true)
+                            {
+                                // If collisions exist
+                                collisions.Add(fileNameFull);
+                            }
+                            else
+                            {
+                                Image img = Image.FromFile(dm2.Element("dataGridView1Path").Value.ToString());
+                                var capt = dm2.Element("dataGridView1Caption").Value;
+                                var pth = dm2.Element("dataGridView1Path").Value;
+                                dataGridView1.Rows.Add(fileName, img, capt, pth);
+                            }
+
+                        }
+                        if (collisions.Count > 0)
+                        {
+                            StringBuilder myStringBuilder = new StringBuilder("Whilst trying to load images from the following project: \n\n");
+                            myStringBuilder.Append(xmlFileName + "\n\n");
+                            myStringBuilder.Append("You tried to add the following file(s): \n\n");
+                            foreach (string value in collisions)
+                            {
+                                myStringBuilder.Append(value);
+                                myStringBuilder.Append(", ");
+                            }
+
+                            myStringBuilder.Append("\n\nBut they were already in the existing list and were NOT loaded. \n\n");
+                            MessageBox.Show(myStringBuilder.ToString());
+                            dgLength();
+                            dgLength();
+                            capLength();
+                            fileSize();
+                            fileSizeTotal();
+                            updatePictureBox();
+                            textBox6.Text = "";
+                            BarExample();
+                        }
+                        else
+                        {
+                            dgLength();
+                            dgLength();
+                            capLength();
+                            fileSize();
+                            fileSizeTotal();
+                            updatePictureBox();                           
+                            BarExample();
+
+                            if (sender.ToString() == "Resume")
+                            {
+                                textBox6.Text = xmlFileName;
+                            }
+                            else
+                            {
+                                textBox6.Text = "";
+                            }
+                            
+                        }
+
+                    }
+                    // Error
+                    catch (Exception exc)
+                    {
+                        StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
+                        myStringBuilder.Append(xmlFileName + "\n\n");
+                        myStringBuilder.Append("The saved project tried to load the following file: \n\n");
+                        myStringBuilder.Append(exc.Message + "\n\n");
+                        myStringBuilder.Append("But this file does not exist in this folder location. Have you perhaps moved it? Or has it been renamed? \n\n");
+                        MessageBox.Show(myStringBuilder.ToString());
+                    }
+                }
+                else
+                {
+                    StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
+                    myStringBuilder.Append(xmlFileName + "\n\n");
+                    myStringBuilder.Append("But this file is empty. \n\n");
+                    MessageBox.Show(myStringBuilder.ToString());
+                }
+            }
+        }
 
 
         // MOVE UP FUNCTION
@@ -1264,6 +1399,7 @@ namespace photolog
         }
 
 
+        // MOVE DOWN FUNCTION
         private void moveDown()
         {
             if (dataGridView1.Rows.Count == 0) return;
@@ -1309,8 +1445,33 @@ namespace photolog
             scrollGrid();
             BarExample();
         }
-       
-        
+
+
+        // FUNSTION - Collision detector
+        private void collisonDetector(DataGridView dataGridView1)
+        {
+            // Make an array of all files in the dataGridView
+            var array0 = dataGridView1.Rows.Cast<DataGridViewRow>()
+                                         .Select(x => x.Cells[3].Value.ToString().Trim()).ToArray();
+
+            var duplicates = array0.GroupBy(p => p).Where(g => g.Count() > 1).Select(g => g.Key);
+
+            //for (int i = 0; i < array0.length; i++)
+            //{
+            //    int Tempval = array0[i];
+            //    index = Array.IndexOf(arr, Tempval);
+            //    console.writeline(index);
+            //}
+            //MessageBox.Show(array0.ToString());
+            //MessageBox.Show(duplicates.ToString());
+            //foreach (string dup in duplicates)
+            //{
+            //    Console.WriteLine($"{dup} ");
+            //}
+
+
+        }
+
     }
 }
 
