@@ -61,6 +61,7 @@
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.addMultipleTempFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -247,6 +248,7 @@
             this.saveToolStripMenuItem,
             this.saveProjectToolStripMenuItem,
             this.resumeToolStripMenuItem,
+            this.addMultipleTempFilesToolStripMenuItem,
             this.changeParentFolderToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -255,28 +257,28 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveProjectToolStripMenuItem
             // 
             this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
-            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.saveProjectToolStripMenuItem.Text = "Save as";
             this.saveProjectToolStripMenuItem.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
             // resumeToolStripMenuItem
             // 
             this.resumeToolStripMenuItem.Name = "resumeToolStripMenuItem";
-            this.resumeToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.resumeToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.resumeToolStripMenuItem.Text = "Resume";
             this.resumeToolStripMenuItem.Click += new System.EventHandler(this.resumeToolStripMenuItem_Click);
             // 
             // changeParentFolderToolStripMenuItem
             // 
             this.changeParentFolderToolStripMenuItem.Name = "changeParentFolderToolStripMenuItem";
-            this.changeParentFolderToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.changeParentFolderToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.changeParentFolderToolStripMenuItem.Text = "Change parent folder";
             this.changeParentFolderToolStripMenuItem.Click += new System.EventHandler(this.changeParentFolderToolStripMenuItem_Click);
             // 
@@ -355,6 +357,13 @@
             this.label1.TabIndex = 60;
             this.label1.Text = "Total (MB)";
             // 
+            // addMultipleTempFilesToolStripMenuItem
+            // 
+            this.addMultipleTempFilesToolStripMenuItem.Name = "addMultipleTempFilesToolStripMenuItem";
+            this.addMultipleTempFilesToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.addMultipleTempFilesToolStripMenuItem.Text = "Append another temp file";
+            this.addMultipleTempFilesToolStripMenuItem.Click += new System.EventHandler(this.addMultipleTempFilesToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -426,6 +435,7 @@
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem addMultipleTempFilesToolStripMenuItem;
     }
 }
 
