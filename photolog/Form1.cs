@@ -43,7 +43,7 @@ namespace photolog
             // attach the right click menu with form
             this.ContextMenuStrip = s;
 
-            //this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseDown);
+            this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseDown);
             dataGridView1.RowHeaderMouseClick += new DataGridViewCellMouseEventHandler(OnRowHeaderMouseClick);
 
             this.AllowDrop = true;
@@ -182,78 +182,16 @@ namespace photolog
             }
         }
 
-        //private void addMultipleTempFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        // Append
         private void addMultipleTempFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             resume(sender, e);
-            //MessageBox.Show(sender.ToString());
-            //MessageBox.Show(e.ToString());
         }
 
         // MENU - Resume
-        //private void resumeToolStripMenuItem_Click(object sender, EventArgs e)
         private void resumeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            resume(sender, e);
-            //MessageBox.Show(sender.ToString());
-            //MessageBox.Show(e.ToString());
-            //OpenFileDialog ofd = new OpenFileDialog();
-            //ofd.Filter = "XML Files (*.xml)|*.xml";
-            //ofd.FilterIndex = 1;
-
-            //// check user selects pass
-            //if (ofd.ShowDialog() == DialogResult.OK)
-            //{
-            //    string xmlFileName = ofd.FileName;
-            //    // For updating textBox
-            //    string xmlFile = Path.GetFileName(xmlFileName);
-            //    //label7.Text = xmlFile;
-
-            //    dataGridView1.Rows.Clear();
-
-            //    // Read and load info from XML 
-            //    XDocument doc = XDocument.Load(xmlFileName);
-            //    if (doc.Root.Elements().Any())
-            //    {
-            //        try
-            //        {
-            //            foreach (var dm2 in doc.Descendants("Table1"))
-            //            {
-            //                string fileName = dm2.Element("fileName").Value;
-            //                string fileNameFull = dm2.Element("dataGridView1Path").Value.ToString();
-            //                Image img = Image.FromFile(dm2.Element("dataGridView1Path").Value.ToString());
-            //                var capt = dm2.Element("dataGridView1Caption").Value;
-            //                var pth = dm2.Element("dataGridView1Path").Value;
-            //                dataGridView1.Rows.Add(fileName, img, capt, pth);
-            //            }
-            //            dgLength();
-            //            dgLength();
-            //            capLength();
-            //            fileSize();
-            //            fileSizeTotal();
-            //            updatePictureBox();
-            //            textBox6.Text = xmlFileName;
-            //            BarExample();
-            //        }
-            //        // Error
-            //        catch (Exception exc)
-            //        {
-            //            StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
-            //            myStringBuilder.Append(xmlFileName + "\n\n");
-            //            myStringBuilder.Append("The saved project tried to load the following file: \n\n");
-            //            myStringBuilder.Append(exc.Message + "\n\n");
-            //            myStringBuilder.Append("But this file does not exist in this folder location. Have you perhaps moved it? Or has it been renamed? \n\n");
-            //            MessageBox.Show(myStringBuilder.ToString());
-            //        }
-            //    }
-            //    else
-            //    {
-            //        StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
-            //        myStringBuilder.Append(xmlFileName + "\n\n");
-            //        myStringBuilder.Append("But this file is empty. \n\n");
-            //        MessageBox.Show(myStringBuilder.ToString());
-            //    }
-            //}
+            resume(sender, e);          
         }
 
 
@@ -538,6 +476,7 @@ namespace photolog
                     var hti = dataGridView1.HitTest(e.X, e.Y);
                     dataGridView1.ClearSelection();
                     dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
+                    //dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[1];
                     dataGridView1.Rows[hti.RowIndex].Selected = true;
                     updatePictureBox();
                 }
@@ -1209,20 +1148,6 @@ namespace photolog
             }            
         }
 
-
-        /*
-        private void button5_Click(object sender, EventArgs e)
-        {
-            Hunspell hunspell = new Hunspell("en_US.aff", "en_US.oxt");
-            Console.WriteLine("Let's determine if technical is spelled correctly.");
-
-
-            bool check = hunspell.Spell("yes");
-
-
-            Console.WriteLine("The word (technical) is " + (check ? "right." : "wrong."));
-        }
-        */
         // RESUME FUNCTION
         private void resume(object sender, EventArgs e)
         {
@@ -1353,14 +1278,6 @@ namespace photolog
             if (dataGridView1.SelectedRows.Count == 0)
             {
                 return;
-                //if (dataGridView1.CurrentCell.RowIndex > -1)
-                //{
-                //    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
-                //}
-                //else
-                //{
-                //    return;
-                //}
             }
 
             List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
@@ -1407,14 +1324,6 @@ namespace photolog
             if (dataGridView1.SelectedRows.Count == 0)
             {
                 return;
-                //if (dataGridView1.CurrentCell.RowIndex > -1)
-                //{
-                //    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Selected = true;
-                //}
-                //else
-                //{
-                //    return;
-                //}
             }
 
             List<DataGridViewRow> SelectedRows = new List<DataGridViewRow>();
@@ -1446,31 +1355,19 @@ namespace photolog
             BarExample();
         }
 
-
-        // FUNSTION - Collision detector
-        private void collisonDetector(DataGridView dataGridView1)
+        
+        private void button5_Click(object sender, EventArgs e)
         {
-            // Make an array of all files in the dataGridView
-            var array0 = dataGridView1.Rows.Cast<DataGridViewRow>()
-                                         .Select(x => x.Cells[3].Value.ToString().Trim()).ToArray();
-
-            var duplicates = array0.GroupBy(p => p).Where(g => g.Count() > 1).Select(g => g.Key);
-
-            //for (int i = 0; i < array0.length; i++)
-            //{
-            //    int Tempval = array0[i];
-            //    index = Array.IndexOf(arr, Tempval);
-            //    console.writeline(index);
-            //}
-            //MessageBox.Show(array0.ToString());
-            //MessageBox.Show(duplicates.ToString());
-            //foreach (string dup in duplicates)
-            //{
-            //    Console.WriteLine($"{dup} ");
-            //}
+            Hunspell hunspell = new Hunspell("en_US.aff", "en_US.oxt");
+            Console.WriteLine("Let's determine if technical is spelled correctly.");
 
 
+            bool check = hunspell.Spell("yes");
+
+
+            Console.WriteLine("The word (technical) is " + (check ? "right." : "wrong."));
         }
+
 
     }
 }
