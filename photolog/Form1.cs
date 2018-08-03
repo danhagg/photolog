@@ -56,13 +56,17 @@ namespace photolog
             this.dataGridView1.DragEnter += new DragEventHandler(dataGridView1_DragEnter);
             this.dataGridView1.AllowDrop = true;
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
-
+            //this.dataGridView1.RowsDefaultCellStyle.BackColor = Color.Bisque;
+            //this.dataGridView1.AlternatingRowsDefaultCellStyle.BackColor =
+            //    Color.Beige;
         }
 
 
         // Set Form listView and datGridView properties on load
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(KeyEvent);
+            this.KeyPreview = true;
             // form resizing
             this.Load += new EventHandler(Form1_Load);
             this.AutoSize = true;
@@ -295,8 +299,6 @@ namespace photolog
 
 
 
-
-
         // Overlay file name on top of image      
         private void dataGridView1_CellPainting(object sender,
                                 DataGridViewCellPaintingEventArgs e)
@@ -521,23 +523,96 @@ namespace photolog
         }
 
 
-        // Key Up and Down
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        private void KeyEvent(object sender, KeyEventArgs e) //Keyup Event 
         {
-            if (keyData == Keys.Up)
+            if (e.KeyCode == Keys.Enter)
             {
-                moveUp();
-                return true;
+                updatePictureBox();
             }
-            else if (keyData == Keys.Down)
+            if (e.KeyCode == Keys.Up)
             {
-                moveDown();
-                return true;
+                updatePictureBox();
+            }
+            if (e.KeyCode == Keys.Down)
+            {
+                updatePictureBox();
+            }
+            if (e.KeyCode == Keys.Delete)
+            {
+                if (dataGridView1.Rows.Count > 0 && dataGridView1.SelectedRows.Count > 0)
+                {
+                    int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
+                    int totalRows = dataGridView1.Rows.Count;
+                    Console.WriteLine("before {0}", rowIndex);
+
+                    foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+                    {
+                        if (rowIndex != -1 && dataGridView1.Rows.Count > 1)
+                        {
+                            dataGridView1.Rows.Remove(row);
+                            dataGridView1.ClearSelection();
+                            //dataGridView1.Rows[0].Selected = true;
+                            dgLength();
+                            fileSizeTotal();
+                            textBox2.Text = "";
+                            textBox3.Text = "";
+                            textBox4.Text = "";
+                            pictureBox1.Image = null;
+                            BarExample();
+                        }
+                        else
+                        {
+                            dataGridView1.Rows.Remove(row);
+                            dataGridView1.ClearSelection();
+                            dgLength();
+                            fileSizeTotal();
+                            textBox2.Text = "";
+                            textBox3.Text = "";
+                            textBox4.Text = "";
+                            pictureBox1.Image = null;
+                            BarExample();
+                        }
+                    }
+                }
+                else
+                {
+                    dgLength();
+                    textBox2.Text = "";
+                    textBox3.Text = "";
+                    textBox4.Text = "";
+                    pictureBox1.Image = null;
+                    BarExample();
+                    return;
+                }
+            }
+            else
+            {
+                return;
+                //MessageBox.Show("No Function");
             }
 
-            return base.ProcessCmdKey(ref msg, keyData);
+
         }
-        
+
+
+        // Key Up and Down
+        //protected override bool ProcessCmdKey(ref Message msg, Keys keyData)       
+        //{
+
+
+            //if (keyData == Keys.Up)
+            //{
+            //    moveUp();
+            //    return true;
+            //}
+            //else if (keyData == Keys.Down)
+            //{
+            //    moveDown();
+            //    return true;
+            //}
+            //else 
+
+        //}
 
         // BUTTON UP
         private void button3_Click_1(object sender, EventArgs e)
@@ -1091,8 +1166,7 @@ namespace photolog
                     //int paraStartNumber = 4;
                     
                     rngTarget0.ListFormat.ApplyNumberDefault();
-                    //rngTarget0.ListFormat.
-
+                              
                     // Get image path and caption from dataGridView
                     string fileName1 = DGV.Rows[i].Cells[3].Value.ToString();
                     string caption = DGV.Rows[i].Cells[2].Value.ToString();
