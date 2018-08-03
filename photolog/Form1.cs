@@ -23,6 +23,8 @@ namespace photolog
         {
             InitializeComponent();
 
+            this.FormClosing += Form1_FormClosing;
+
             //Create right click menu using contextmenustrip for right click move top bottom
             ContextMenuStrip s = new ContextMenuStrip();
             // add one right click menu item named as top and bottom          
@@ -114,6 +116,21 @@ namespace photolog
             label5.Text = "PhotoLog Desktop Version: " + version;
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+           
+            DialogResult dialogResult = MessageBox.Show("You  are exiting Photolog. Are you sure?", "Photolog warning", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                return;
+            }
+            else
+            {              
+                e.Cancel = true;
+            }
+        }
+
+
         /*
          MENU OPTIONS
          */
@@ -150,7 +167,7 @@ namespace photolog
 
             if (path == "")
             {
-                Console.WriteLine("empty");
+                //Console.WriteLine("empty");
                 DataSet dS = new DataSet();
                 //System.Data.DataTable dT1 = GetDataTableFromDGV0(dataGridView0);
                 System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
@@ -262,6 +279,9 @@ namespace photolog
             }
 
         }
+
+
+
 
 
         // Overlay file name on top of image      
@@ -1306,11 +1326,6 @@ namespace photolog
 
                 }
             }
-            /*
-            if (dataGridView1.SelectedRows.Count == 1)
-            {
-                dataGridView1.CurrentCell = dataGridView1.Rows[SelectedRows[0].Index].Cells[0];
-            }*/
             scrollGrid();
             BarExample();
         }
@@ -1356,19 +1371,56 @@ namespace photolog
         }
 
         
-        private void button5_Click(object sender, EventArgs e)
-        {
-            Hunspell hunspell = new Hunspell("en_US.aff", "en_US.oxt");
-            Console.WriteLine("Let's determine if technical is spelled correctly.");
+        //private void button5_Click(object sender, EventArgs e)
+        //{
+        //    MessageBox.Show("f");
+        //    Hunspell hunspell = new Hunspell("en_US.aff", "en_US.oxt");
+        //    Console.WriteLine("Let's determine if technical is spelled correctly.");
 
 
-            bool check = hunspell.Spell("yes");
+        //    bool check = hunspell.Spell("yes");
 
 
-            Console.WriteLine("The word (technical) is " + (check ? "right." : "wrong."));
-        }
+        //    Console.WriteLine("The word (technical) is " + (check ? "right." : "wrong."));
+        //}
+
+        //private void button5_Click_1(object sender, EventArgs e)
+        //{
+        //    //Hunspell(string affFile, string dictFile, string key);
+        //    //Hunspell hunspell = new Hunspell("en_US.aff", "en_US.oxt");
+        //    Hunspell hunspell = new Hunspell("en_US.aff", "index.dic");
+        //    string word = "house";
+        //    string words = textBox1.Text;
+        //    bool check = hunspell.Spell(words);
+
+        //    MessageBox.Show("The word house is " + (check ? "right." : "wrong."));
+
+        //    var textLines = textBox1.Text.Split(' ');
+        //    foreach (string w in textLines)
+        //    {
+        //        bool checkWord = hunspell.Spell(w);
+        //        if (checkWord == false)
+        //        {
+        //            w.
+        //        }
+        //    }
 
 
+        //        int index = 0;
+        //    String temp = richTextBox1.Text;
+        //    richTextBox1.Text = "";
+        //    richTextBox1.Text = temp;
+
+        //    while (index < richTextBox1.Text.LastIndexOf(textBox1.Text))
+        //    {
+        //        richTextBox1.Find(textBox1.Text, index, richTextBox1.TextLength, RichTextBoxFinds.None);
+        //        richTextBox1.SelectionBackColor = Color.Orange;
+        //        index = richTextBox1.Text.IndexOf(textBox1.Text, index) + 1;
+        //    }
+
+        //    //index = textBox1.Text.IndexOf(textBox1.Text, index, StringComparison.InvariantCultureIgnoreCase) + 1;
+
+        //}
     }
 }
 

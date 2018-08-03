@@ -62,6 +62,9 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.addMultipleTempFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button5 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -257,28 +260,28 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveProjectToolStripMenuItem
             // 
             this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
-            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.saveProjectToolStripMenuItem.Text = "Save as";
             this.saveProjectToolStripMenuItem.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
             // resumeToolStripMenuItem
             // 
             this.resumeToolStripMenuItem.Name = "resumeToolStripMenuItem";
-            this.resumeToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.resumeToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.resumeToolStripMenuItem.Text = "Resume";
             this.resumeToolStripMenuItem.Click += new System.EventHandler(this.resumeToolStripMenuItem_Click);
             // 
             // changeParentFolderToolStripMenuItem
             // 
             this.changeParentFolderToolStripMenuItem.Name = "changeParentFolderToolStripMenuItem";
-            this.changeParentFolderToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.changeParentFolderToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.changeParentFolderToolStripMenuItem.Text = "Change parent folder";
             this.changeParentFolderToolStripMenuItem.Click += new System.EventHandler(this.changeParentFolderToolStripMenuItem_Click);
             // 
@@ -364,12 +367,40 @@
             this.addMultipleTempFilesToolStripMenuItem.Text = "Append another temp file";
             this.addMultipleTempFilesToolStripMenuItem.Click += new System.EventHandler(this.addMultipleTempFilesToolStripMenuItem_Click);
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(690, 39);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 61;
+            this.button5.Text = "button5";
+            this.button5.UseVisualStyleBackColor = true;
+            //this.button5.Click += new System.EventHandler(this.button5_Click_1);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(772, 39);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(95, 20);
+            this.textBox1.TabIndex = 62;
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(886, 39);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(132, 20);
+            this.richTextBox1.TabIndex = 63;
+            this.richTextBox1.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1251, 857);
+            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox5);
             this.Controls.Add(this.label8);
@@ -436,6 +467,9 @@
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem addMultipleTempFilesToolStripMenuItem;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
 
