@@ -119,7 +119,7 @@ namespace photolog
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
            
-            DialogResult dialogResult = MessageBox.Show("You  are exiting Photolog. Are you sure?", "Photolog warning", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show("You  are exiting Photolog. You may lose unsaved  work. Are you sure you want to quit?", "Photolog warning", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
                 return;
@@ -145,10 +145,19 @@ namespace photolog
             //dS.Tables.Add(dT1);
             dS.Tables.Add(dT2);
 
+            //SaveFileDialog saveFileDialog = new SaveFileDialog();
+            //saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
+            //saveFileDialog.AddExtension = true;
+            //saveFileDialog.Title = "Save work as .XML file";
+
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
+            //saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
+            saveFileDialog.Filter = "photolog file (*.photolog)|*.photolog";
+            saveFileDialog.DefaultExt = "photolog";
             saveFileDialog.AddExtension = true;
-            saveFileDialog.Title = "Save work as .XML file";
+            //saveFileDialog.Title = "Save work as .XML file";
+            saveFileDialog.Title = "Save work as .photolog file";
+
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 //dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
@@ -177,9 +186,12 @@ namespace photolog
 
 
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
+                //saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
+                saveFileDialog.Filter = "photolog file (*.photolog)|*.photolog";
+                saveFileDialog.DefaultExt = "photolog";
                 saveFileDialog.AddExtension = true;
-                saveFileDialog.Title = "Save work as .XML file";
+                //saveFileDialog.Title = "Save work as .XML file";
+                saveFileDialog.Title = "Save work as .photolog file";
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     //dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
@@ -215,10 +227,11 @@ namespace photolog
         // MENU - Change My parent folder
         private void changeParentFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            OpenFileDialog ofd = new OpenFileDialog();         
             ofd.Filter = "XML Files (*.xml)|*.xml";
+            ofd.Filter = "photolog file(*.photolog)| *.photolog";
             ofd.FilterIndex = 1;
-            ofd.Title = "Select temp file. The temp file must be in same folder as your images for this to work.";
+            ofd.Title = "Select .photolog file. The .photolog file must be in same folder as your images for this to work.";
 
             // check user selects pass
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -1172,9 +1185,10 @@ namespace photolog
         private void resume(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "XML Files (*.xml)|*.xml";
+            //ofd.Filter = "XML Files (*.xml)|*.xml";
+            ofd.Filter = "photolog files (*.photolog; *.XML)| *.photolog; *.XML";
             ofd.FilterIndex = 1;
-
+            
             // check user selects pass
             if (ofd.ShowDialog() == DialogResult.OK)
             {
