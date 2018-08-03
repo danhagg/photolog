@@ -49,6 +49,7 @@ namespace photolog
             dataGridView1.RowHeaderMouseClick += new DataGridViewCellMouseEventHandler(OnRowHeaderMouseClick);
 
             this.AllowDrop = true;
+            this.dataGridView1.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
             //this.DragOver += new DragEventHandler(Form1_DragOver);
             //this.DragDrop += new DragEventHandler(Form1_DragDrop);
             this.dataGridView1.DragOver += new DragEventHandler(dataGridView1_DragOver);
@@ -56,6 +57,8 @@ namespace photolog
             this.dataGridView1.DragEnter += new DragEventHandler(dataGridView1_DragEnter);
             this.dataGridView1.AllowDrop = true;
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
+            //this.dataGridView1.GridColor = Color.BlueViolet;
+            this.dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
             //this.dataGridView1.RowsDefaultCellStyle.BackColor = Color.Bisque;
             //this.dataGridView1.AlternatingRowsDefaultCellStyle.BackColor =
             //    Color.Beige;
@@ -115,9 +118,8 @@ namespace photolog
             chart1.ChartAreas[0].AxisX.ScrollBar.Enabled = true;
            
 
-            // photolog version
-            string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            label5.Text = "PhotoLog Desktop Version: " + version;
+            // photolog version           
+            label5.Text = "PhotoLog v1.1";
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -499,8 +501,6 @@ namespace photolog
         }
 
 
-
-
         // Allows the left and right click to highlight a row in dataGridView1
         private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -521,6 +521,7 @@ namespace photolog
                 }
             }
         }
+
 
 
         private void KeyEvent(object sender, KeyEventArgs e) //Keyup Event 
