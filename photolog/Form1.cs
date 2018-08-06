@@ -1328,22 +1328,35 @@ namespace photolog
                     // Picture placement
                     //InlineShape pic = rngTarget1.InlineShapes.AddPicture(fileName1, ref oMissing, ref oMissing, ref anchor);
                     InlineShape pic = rngTarget1.InlineShapes.AddPicture(fileName1, ref oMissing, ref oMissing, ref oMissing);
-
                     Shape sh = pic.ConvertToShape();
                     sh.LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoCTrue;
 
 
-                    // Windows runs as default at 96dpi (display) Macs run as default at 72 dpi (display)
-                    // Assuming 72 points per inch
-                    // 3.5 inches is 3.5*72 = 252
-                    // 3.25 inches is 3.25*72 = 234
+                    int exifOrientationID = 0x112; //274
+                    Image img = Image.FromFile(fileName1);
+                    var prop = img.GetPropertyItem(exifOrientationID);
+                    int val = BitConverter.ToUInt16(prop.Value, 0);
+                    //MessageBox.Show(val.ToString());
 
-                    sh.Height = 252;
-
-                    if (sh.Width > 400)
+                    if (val == 5 || val == 6 || val == 7 || val == 8)
                     {
-                        sh.Width = 400;
+                        sh.Width = 252;
+
+                        if (sh.Height > 400)
+                        {
+                            sh.Height = 400;
+                        }
                     }
+                    else
+                    {
+                        sh.Height = 252;
+
+                        if (sh.Width > 400)
+                        {
+                            sh.Width = 400;
+                        }
+                    }
+
 
                     sh.Left = (float)WdShapePosition.wdShapeCenter;
                     sh.Top = (float)WdShapePosition.wdShapeTop;
@@ -1355,7 +1368,10 @@ namespace photolog
                     //rngTarget1.InsertParagraphAfter();                
                 }
 
-
+                // Windows runs as default at 96dpi (display) Macs run as default at 72 dpi (display)
+                // Assuming 72 points per inch
+                // 3.5 inches is 3.5*72 = 252
+                // 3.25 inches is 3.25*72 = 234
                 /*
                 foreach (Shape ilPicture in oDoc.Shapes)
                 {
