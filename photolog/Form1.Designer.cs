@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.file1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -52,6 +52,7 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addMultipleTempFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeParentFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -61,10 +62,8 @@
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.addMultipleTempFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.button5 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -209,38 +208,38 @@
             // textBox6
             // 
             this.textBox6.BackColor = System.Drawing.SystemColors.Window;
-            this.textBox6.Location = new System.Drawing.Point(74, 66);
+            this.textBox6.Location = new System.Drawing.Point(82, 66);
             this.textBox6.Name = "textBox6";
             this.textBox6.ReadOnly = true;
-            this.textBox6.Size = new System.Drawing.Size(565, 20);
+            this.textBox6.Size = new System.Drawing.Size(557, 20);
             this.textBox6.TabIndex = 40;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(18, 69);
+            this.label9.Location = new System.Drawing.Point(12, 69);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(50, 13);
+            this.label9.Size = new System.Drawing.Size(64, 13);
             this.label9.TabIndex = 42;
-            this.label9.Text = "Temp file";
+            this.label9.Text = "photolog file";
             // 
             // chart1
             // 
             this.chart1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.chart1.BorderlineColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.chart1.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea4.AxisX.MajorGrid.Enabled = false;
-            chartArea4.AxisX.MajorTickMark.Enabled = false;
-            chartArea4.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea4);
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisX.MajorTickMark.Enabled = false;
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Location = new System.Drawing.Point(646, 688);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Grayscale;
-            series4.ChartArea = "ChartArea1";
-            series4.IsValueShownAsLabel = true;
-            series4.Name = "Series1";
-            series4.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            this.chart1.Series.Add(series4);
+            series1.ChartArea = "ChartArea1";
+            series1.IsValueShownAsLabel = true;
+            series1.Name = "Series1";
+            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(596, 161);
             this.chart1.TabIndex = 52;
             this.chart1.Text = "chart1";
@@ -277,6 +276,13 @@
             this.resumeToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.resumeToolStripMenuItem.Text = "Resume";
             this.resumeToolStripMenuItem.Click += new System.EventHandler(this.resumeToolStripMenuItem_Click);
+            // 
+            // addMultipleTempFilesToolStripMenuItem
+            // 
+            this.addMultipleTempFilesToolStripMenuItem.Name = "addMultipleTempFilesToolStripMenuItem";
+            this.addMultipleTempFilesToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.addMultipleTempFilesToolStripMenuItem.Text = "Append another temp file";
+            this.addMultipleTempFilesToolStripMenuItem.Click += new System.EventHandler(this.addMultipleTempFilesToolStripMenuItem_Click);
             // 
             // changeParentFolderToolStripMenuItem
             // 
@@ -360,37 +366,22 @@
             this.label1.TabIndex = 60;
             this.label1.Text = "Total (MB)";
             // 
-            // addMultipleTempFilesToolStripMenuItem
-            // 
-            this.addMultipleTempFilesToolStripMenuItem.Name = "addMultipleTempFilesToolStripMenuItem";
-            this.addMultipleTempFilesToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.addMultipleTempFilesToolStripMenuItem.Text = "Append another temp file";
-            this.addMultipleTempFilesToolStripMenuItem.Click += new System.EventHandler(this.addMultipleTempFilesToolStripMenuItem_Click);
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(690, 39);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 61;
-            this.button5.Text = "button5";
-            this.button5.UseVisualStyleBackColor = true;
-            //this.button5.Click += new System.EventHandler(this.button5_Click_1);
-            // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(772, 39);
+            this.textBox1.Location = new System.Drawing.Point(654, 647);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(95, 20);
-            this.textBox1.TabIndex = 62;
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 61;
             // 
-            // richTextBox1
+            // button1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(886, 39);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(132, 20);
-            this.richTextBox1.TabIndex = 63;
-            this.richTextBox1.Text = "";
+            this.button1.Location = new System.Drawing.Point(654, 614);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 62;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            //this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
@@ -398,9 +389,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1251, 857);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.button5);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox5);
             this.Controls.Add(this.label8);
@@ -467,9 +457,8 @@
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem addMultipleTempFilesToolStripMenuItem;
-        private System.Windows.Forms.Button button5;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Button button1;
     }
 }
 
