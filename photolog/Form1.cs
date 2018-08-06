@@ -233,9 +233,8 @@ namespace photolog
         // MENU - Change My parent folder
         private void changeParentFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();         
-            ofd.Filter = "XML Files (*.xml)|*.xml";
-            ofd.Filter = "photolog file(*.photolog)| *.photolog";
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "photolog files (*.photolog; *.XML)| *.photolog; *.XML";
             ofd.FilterIndex = 1;
             ofd.Title = "Select .photolog file. The .photolog file must be in same folder as your images for this to work.";
 
@@ -521,7 +520,6 @@ namespace photolog
                 }
             }
         }
-
 
 
         private void KeyEvent(object sender, KeyEventArgs e) //Keyup Event 
@@ -1171,7 +1169,7 @@ namespace photolog
                     // Get image path and caption from dataGridView
                     string fileName1 = DGV.Rows[i].Cells[3].Value.ToString();
                     string caption = DGV.Rows[i].Cells[2].Value.ToString();
-
+                    caption = caption.TrimEnd('\r', '\n');
 
                     // Picture placement
                     //InlineShape pic = rngTarget1.InlineShapes.AddPicture(fileName1, ref oMissing, ref oMissing, ref anchor);
@@ -1359,11 +1357,11 @@ namespace photolog
                     // Error
                     catch (Exception exc)
                     {
-                        StringBuilder myStringBuilder = new StringBuilder("You tried to load images from the following saved project: \n\n");
-                        myStringBuilder.Append(xmlFileName + "\n\n");
-                        myStringBuilder.Append("The saved project tried to load the following file: \n\n");
+                        StringBuilder myStringBuilder = new StringBuilder(xmlFileName + "\n");
+                        myStringBuilder.Append("tried to load the following file: \n\n");
                         myStringBuilder.Append(exc.Message + "\n\n");
                         myStringBuilder.Append("But this file does not exist in this folder location. Have you perhaps moved it? Or has it been renamed? \n\n");
+                        myStringBuilder.Append("If you have moved all your files you could try changing the parent folder from the menu! \n\n");
                         MessageBox.Show(myStringBuilder.ToString());
                     }
                 }
