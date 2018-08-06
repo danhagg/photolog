@@ -236,6 +236,7 @@ namespace photolog
         // MENU - Change My parent folder
         private void changeParentFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            const int exifOrientationID = 0x112; //274
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "photolog files (*.photolog; *.XML)| *.photolog; *.XML";
             ofd.FilterIndex = 1;
@@ -264,28 +265,37 @@ namespace photolog
                             string temp = dm2.Element("dataGridView1Path").Value.ToString();
                             string file_ext = Path.GetFileName(temp);
                             string fileNameFull = xmlFileDirectory + '\\' + file_ext;
-                            //MessageBox.Show(fileNameFull);
                             Image img = Image.FromFile(fileNameFull);
-                            const int exifOrientationID = 0x112; //274
-                            var prop = img.GetPropertyItem(exifOrientationID);
-                            int val = BitConverter.ToUInt16(prop.Value, 0);
-                            var rot = RotateFlipType.RotateNoneFlipNone;
 
-                            if (val == 3 || val == 4)
-                                rot = RotateFlipType.Rotate180FlipNone;
-                            else if (val == 5 || val == 6)
-                                rot = RotateFlipType.Rotate90FlipNone;
-                            else if (val == 7 || val == 8)
-                                rot = RotateFlipType.Rotate270FlipNone;
+                            if (!img.PropertyIdList.Contains(exifOrientationID))
+                            {
+                                var capt = dm2.Element("dataGridView1Caption").Value;
+                                var pth = fileNameFull;
+                                dataGridView1.Rows.Add(fileName, img, capt, pth);
+                            }
+                            else
+                            {
+                                var prop = img.GetPropertyItem(exifOrientationID);
+                                int val = BitConverter.ToUInt16(prop.Value, 0);
+                                var rot = RotateFlipType.RotateNoneFlipNone;
 
-                            if (val == 2 || val == 4 || val == 5 || val == 7)
-                                rot |= RotateFlipType.RotateNoneFlipX;
+                                if (val == 3 || val == 4)
+                                    rot = RotateFlipType.Rotate180FlipNone;
+                                else if (val == 5 || val == 6)
+                                    rot = RotateFlipType.Rotate90FlipNone;
+                                else if (val == 7 || val == 8)
+                                    rot = RotateFlipType.Rotate270FlipNone;
 
-                            if (rot != RotateFlipType.RotateNoneFlipNone)
-                                img.RotateFlip(rot);
-                            var capt = dm2.Element("dataGridView1Caption").Value;
-                            var pth = fileNameFull;
-                            dataGridView1.Rows.Add(fileName, img, capt, pth);
+                                if (val == 2 || val == 4 || val == 5 || val == 7)
+                                    rot |= RotateFlipType.RotateNoneFlipX;
+
+                                if (rot != RotateFlipType.RotateNoneFlipNone)
+                                    img.RotateFlip(rot);
+                                var capt = dm2.Element("dataGridView1Caption").Value;
+                                var pth = fileNameFull;
+                                dataGridView1.Rows.Add(fileName, img, capt, pth);
+                            }                             
+
                         }
                         dgLength();
                         dgLength();
@@ -431,25 +441,35 @@ namespace photolog
                             string fFull = Path.GetFullPath(remainderTransfer[i]);
                             string fileNam = Path.GetFileNameWithoutExtension(remainderTransfer[i]);
                             Image img = Image.FromFile(fFull);
-                            var prop = img.GetPropertyItem(exifOrientationID);
-                            int val = BitConverter.ToUInt16(prop.Value, 0);
-                            var rot = RotateFlipType.RotateNoneFlipNone;
+                            if (!img.PropertyIdList.Contains(exifOrientationID))
+                            {
+                                Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                dataGridView1.Rows.Insert(totalRows + i, row);
+                            }
+                            else
+                            {
+                                var prop = img.GetPropertyItem(exifOrientationID);
+                                int val = BitConverter.ToUInt16(prop.Value, 0);
+                                var rot = RotateFlipType.RotateNoneFlipNone;
 
-                            if (val == 3 || val == 4)
-                                rot = RotateFlipType.Rotate180FlipNone;
-                            else if (val == 5 || val == 6)
-                                rot = RotateFlipType.Rotate90FlipNone;
-                            else if (val == 7 || val == 8)
-                                rot = RotateFlipType.Rotate270FlipNone;
+                                if (val == 3 || val == 4)
+                                    rot = RotateFlipType.Rotate180FlipNone;
+                                else if (val == 5 || val == 6)
+                                    rot = RotateFlipType.Rotate90FlipNone;
+                                else if (val == 7 || val == 8)
+                                    rot = RotateFlipType.Rotate270FlipNone;
 
-                            if (val == 2 || val == 4 || val == 5 || val == 7)
-                                rot |= RotateFlipType.RotateNoneFlipX;
+                                if (val == 2 || val == 4 || val == 5 || val == 7)
+                                    rot |= RotateFlipType.RotateNoneFlipX;
 
-                            if (rot != RotateFlipType.RotateNoneFlipNone)
-                                img.RotateFlip(rot);
-                            Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                if (rot != RotateFlipType.RotateNoneFlipNone)
+                                    img.RotateFlip(rot);
+                                Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                dataGridView1.Rows.Insert(totalRows + i, row);
+                            }
+                            
                             // Add at index under mouse for first and + i for rest
-                            dataGridView1.Rows.Insert(totalRows + i, row);
+                            //dataGridView1.Rows.Insert(totalRows + i, row);
                         }
                         dataGridView1.CurrentCell = this.dataGridView1[1, totalRows];
                         dgLength();
@@ -468,25 +488,32 @@ namespace photolog
                             string fFull = Path.GetFullPath(remainderTransfer[i]);
                             string fileNam = Path.GetFileNameWithoutExtension(remainderTransfer[i]);
                             Image img = Image.FromFile(fFull);
-                            var prop = img.GetPropertyItem(exifOrientationID);
-                            int val = BitConverter.ToUInt16(prop.Value, 0);
-                            var rot = RotateFlipType.RotateNoneFlipNone;
+                            if (!img.PropertyIdList.Contains(exifOrientationID))
+                            {
+                                Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);
+                            }
+                            else
+                            {
+                                var prop = img.GetPropertyItem(exifOrientationID);
+                                int val = BitConverter.ToUInt16(prop.Value, 0);
+                                var rot = RotateFlipType.RotateNoneFlipNone;
 
-                            if (val == 3 || val == 4)
-                                rot = RotateFlipType.Rotate180FlipNone;
-                            else if (val == 5 || val == 6)
-                                rot = RotateFlipType.Rotate90FlipNone;
-                            else if (val == 7 || val == 8)
-                                rot = RotateFlipType.Rotate270FlipNone;
+                                if (val == 3 || val == 4)
+                                    rot = RotateFlipType.Rotate180FlipNone;
+                                else if (val == 5 || val == 6)
+                                    rot = RotateFlipType.Rotate90FlipNone;
+                                else if (val == 7 || val == 8)
+                                    rot = RotateFlipType.Rotate270FlipNone;
 
-                            if (val == 2 || val == 4 || val == 5 || val == 7)
-                                rot |= RotateFlipType.RotateNoneFlipX;
+                                if (val == 2 || val == 4 || val == 5 || val == 7)
+                                    rot |= RotateFlipType.RotateNoneFlipX;
 
-                            if (rot != RotateFlipType.RotateNoneFlipNone)
-                                img.RotateFlip(rot);
-                            Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
-                            // Add at index under mouse for first and + i for rest
-                            dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);
+                                if (rot != RotateFlipType.RotateNoneFlipNone)
+                                    img.RotateFlip(rot);
+                                Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);
+                            }
                         }
                         // Move highlighted + slected to top of that index
                         //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
@@ -510,24 +537,33 @@ namespace photolog
                             string fFull = Path.GetFullPath(fileNames[i]);
                             string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
                             Image img = Image.FromFile(fFull);
-                            var prop = img.GetPropertyItem(exifOrientationID);
-                            int val = BitConverter.ToUInt16(prop.Value, 0);
-                            var rot = RotateFlipType.RotateNoneFlipNone;
+                            if (!img.PropertyIdList.Contains(exifOrientationID))
+                            {
+                                Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                dataGridView1.Rows.Add(row);
+                            }
+                            else
+                            {
+                                var prop = img.GetPropertyItem(exifOrientationID);
+                                int val = BitConverter.ToUInt16(prop.Value, 0);
+                                var rot = RotateFlipType.RotateNoneFlipNone;
 
-                            if (val == 3 || val == 4)
-                                rot = RotateFlipType.Rotate180FlipNone;
-                            else if (val == 5 || val == 6)
-                                rot = RotateFlipType.Rotate90FlipNone;
-                            else if (val == 7 || val == 8)
-                                rot = RotateFlipType.Rotate270FlipNone;
+                                if (val == 3 || val == 4)
+                                    rot = RotateFlipType.Rotate180FlipNone;
+                                else if (val == 5 || val == 6)
+                                    rot = RotateFlipType.Rotate90FlipNone;
+                                else if (val == 7 || val == 8)
+                                    rot = RotateFlipType.Rotate270FlipNone;
 
-                            if (val == 2 || val == 4 || val == 5 || val == 7)
-                                rot |= RotateFlipType.RotateNoneFlipX;
+                                if (val == 2 || val == 4 || val == 5 || val == 7)
+                                    rot |= RotateFlipType.RotateNoneFlipX;
 
-                            if (rot != RotateFlipType.RotateNoneFlipNone)
-                                img.RotateFlip(rot);
-                            Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
-                            dataGridView1.Rows.Add(row);
+                                if (rot != RotateFlipType.RotateNoneFlipNone)
+                                    img.RotateFlip(rot);
+                                Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                dataGridView1.Rows.Add(row);
+                            }
+                            
                         }
                         dgLength();
                         capLength();
@@ -548,30 +584,34 @@ namespace photolog
                                 string fFull = Path.GetFullPath(fileNames[i]);
                                 string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
                                 Image img = Image.FromFile(fFull);
-                                var prop = img.GetPropertyItem(exifOrientationID);
-                                int val = BitConverter.ToUInt16(prop.Value, 0);
-                                var rot = RotateFlipType.RotateNoneFlipNone;
+                                if (!img.PropertyIdList.Contains(exifOrientationID))
+                                {
+                                    Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                    dataGridView1.Rows.Add(row);
+                                }
+                                else
+                                {
+                                    var prop = img.GetPropertyItem(exifOrientationID);
+                                    int val = BitConverter.ToUInt16(prop.Value, 0);
+                                    var rot = RotateFlipType.RotateNoneFlipNone;
 
-                                if (val == 3 || val == 4)
-                                    rot = RotateFlipType.Rotate180FlipNone;
-                                else if (val == 5 || val == 6)
-                                    rot = RotateFlipType.Rotate90FlipNone;
-                                else if (val == 7 || val == 8)
-                                    rot = RotateFlipType.Rotate270FlipNone;
+                                    if (val == 3 || val == 4)
+                                        rot = RotateFlipType.Rotate180FlipNone;
+                                    else if (val == 5 || val == 6)
+                                        rot = RotateFlipType.Rotate90FlipNone;
+                                    else if (val == 7 || val == 8)
+                                        rot = RotateFlipType.Rotate270FlipNone;
 
-                                if (val == 2 || val == 4 || val == 5 || val == 7)
-                                    rot |= RotateFlipType.RotateNoneFlipX;
+                                    if (val == 2 || val == 4 || val == 5 || val == 7)
+                                        rot |= RotateFlipType.RotateNoneFlipX;
 
-                                if (rot != RotateFlipType.RotateNoneFlipNone)
-                                    img.RotateFlip(rot);
-                                Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
-                                // Add at index under mouse for first and + i for rest
-                                dataGridView1.Rows.Insert(totalRows + i, row);
+                                    if (rot != RotateFlipType.RotateNoneFlipNone)
+                                        img.RotateFlip(rot);
+                                    Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                    dataGridView1.Rows.Add(row);
+                                }
+
                             }
-                            // Move highlighted + slected to top of that index
-                            //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
-                            dataGridView1.CurrentCell = this.dataGridView1[1, totalRows];
-
                             dgLength();
                             capLength();
                             fileSize();
@@ -589,25 +629,33 @@ namespace photolog
                                 string fFull = Path.GetFullPath(fileNames[i]);
                                 string fileNam = Path.GetFileNameWithoutExtension(fileNames[i]);
                                 Image img = Image.FromFile(fFull);
-                                var prop = img.GetPropertyItem(exifOrientationID);
-                                int val = BitConverter.ToUInt16(prop.Value, 0);
-                                var rot = RotateFlipType.RotateNoneFlipNone;
+                                if (!img.PropertyIdList.Contains(exifOrientationID))
+                                {
+                                    Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                    dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);
+                                }
+                                else
+                                {
+                                    var prop = img.GetPropertyItem(exifOrientationID);
+                                    int val = BitConverter.ToUInt16(prop.Value, 0);
+                                    var rot = RotateFlipType.RotateNoneFlipNone;
 
-                                if (val == 3 || val == 4)
-                                    rot = RotateFlipType.Rotate180FlipNone;
-                                else if (val == 5 || val == 6)
-                                    rot = RotateFlipType.Rotate90FlipNone;
-                                else if (val == 7 || val == 8)
-                                    rot = RotateFlipType.Rotate270FlipNone;
+                                    if (val == 3 || val == 4)
+                                        rot = RotateFlipType.Rotate180FlipNone;
+                                    else if (val == 5 || val == 6)
+                                        rot = RotateFlipType.Rotate90FlipNone;
+                                    else if (val == 7 || val == 8)
+                                        rot = RotateFlipType.Rotate270FlipNone;
 
-                                if (val == 2 || val == 4 || val == 5 || val == 7)
-                                    rot |= RotateFlipType.RotateNoneFlipX;
+                                    if (val == 2 || val == 4 || val == 5 || val == 7)
+                                        rot |= RotateFlipType.RotateNoneFlipX;
 
-                                if (rot != RotateFlipType.RotateNoneFlipNone)
-                                    img.RotateFlip(rot);
-                                Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
-                                // Add at index under mouse for first and + i for rest
-                                dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);
+                                    if (rot != RotateFlipType.RotateNoneFlipNone)
+                                        img.RotateFlip(rot);
+                                    Object[] row = new object[] { fileNam, img, "Insert caption here", fFull };
+                                    dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop + i, row);
+                                }
+                                
                             }
                             // Move highlighted + slected to top of that index
                             //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
@@ -1035,102 +1083,147 @@ namespace photolog
 
             Image img_file = Image.FromFile(txt);
 
-            //if (!img_file.PropertyIdList.Contains(exifOrientationID))
-            //    return;
-
-            var prop = img_file.GetPropertyItem(exifOrientationID);
-            int val = BitConverter.ToUInt16(prop.Value, 0);
-            var rot = RotateFlipType.RotateNoneFlipNone;
-
-            if (val == 3 || val == 4)
-                rot = RotateFlipType.Rotate180FlipNone;
-            else if (val == 5 || val == 6)
-                rot = RotateFlipType.Rotate90FlipNone;
-            else if (val == 7 || val == 8)
-                rot = RotateFlipType.Rotate270FlipNone;
-
-            if (val == 2 || val == 4 || val == 5 || val == 7)
-                rot |= RotateFlipType.RotateNoneFlipX;
-
-
-            float filesize = new FileInfo(dataGridView1.SelectedRows[0].Cells[3].Value.ToString()).Length;
-
-            if (txt != null)
-                if (filesize > 5000000)
+            if (!img_file.PropertyIdList.Contains(exifOrientationID))
+            {
+                Image img0;
+                using (var bmpTemp = new Bitmap(img_file))
                 {
-                    pictureBox1.Image = null;
-                    textBox4.Text = txt;
-                    StringBuilder myStringBuilder = new StringBuilder("This image exceeds 5 MB: \n\n");
-                    myStringBuilder.Append(txt + "\n\n");
-                    myStringBuilder.Append("It may cause problems if the Photolog app tries to view it. \n\n" +
-                        "It is also likely to cause problems if you try and PUBLISH it in your Word Document. " +
-                    "Maybe you could try compressing the image or use a different one?");
-                    MessageBox.Show(myStringBuilder.ToString());
-                }
+                    img0 = new Bitmap(bmpTemp);
 
-                else
-                {
-                    Image img;
-                    using (var bmpTemp = new Bitmap(txt))
+                    int rectHeight = pictureBox1.Height;
+                    int rectWidth = pictureBox1.Width;
+
+                    //if the image is squared set it's height and width to the smallest of the desired dimensions (our box). In the current example rectHeight<rectWidth
+                    if (img0.Height == img0.Width)
                     {
-
-                   
-                        img = new Bitmap(bmpTemp);
-
-                        int rectHeight = pictureBox1.Height;
-                        int rectWidth = pictureBox1.Width;
-
-                        //if the image is squared set it's height and width to the smallest of the desired dimensions (our box). In the current example rectHeight<rectWidth
-                        if (img.Height == img.Width)
-                        {
-                            resizedImage = new Bitmap(img, rectHeight, rectHeight);
-                        }
-                        else
-                        {
-                            //calculate aspect ratio
-                            float aspect = img.Width / (float)img.Height;
-                            int newWidth, newHeight;
-                            //calculate new dimensions based on aspect ratio
-                            newWidth = (int)(rectWidth * aspect);
-                            newHeight = (int)(newWidth / aspect);
-                            //if one of the two dimensions exceed the box dimensions
-                            if (newWidth > rectWidth || newHeight > rectHeight)
-                            {
-                                //depending on which of the two exceeds the box dimensions set it as the box dimension and calculate the other one based on the aspect ratio
-                                if (newWidth > newHeight)
-                                {
-                                    newWidth = rectWidth;
-                                    newHeight = (int)(newWidth / aspect);
-                                }
-                                else
-                                {
-                                    newHeight = rectHeight;
-                                    newWidth = (int)(newHeight * aspect);
-                                }
-                            }
-                            resizedImage = new Bitmap(img, newWidth, newHeight);
-                            pictureBox1.Image = resizedImage;
-
-                            
-                            if (rot != RotateFlipType.RotateNoneFlipNone)
-                                resizedImage.RotateFlip(rot);
-
-                            //bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                            pictureBox1.Image = resizedImage;
-                            //rotImage();
-                            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-                            textBox4.Text = txt;
-                        }
-                        // Use default image viewer
-                        //Process.Start(txt);
+                        resizedImage = new Bitmap(img0, rectHeight, rectHeight);
                     }
+                    else
+                    {
+                        //calculate aspect ratio
+                        float aspect = img0.Width / (float)img0.Height;
+                        int newWidth, newHeight;
+                        //calculate new dimensions based on aspect ratio
+                        newWidth = (int)(rectWidth * aspect);
+                        newHeight = (int)(newWidth / aspect);
+                        //if one of the two dimensions exceed the box dimensions
+                        if (newWidth > rectWidth || newHeight > rectHeight)
+                        {
+                            //depending on which of the two exceeds the box dimensions set it as the box dimension and calculate the other one based on the aspect ratio
+                            if (newWidth > newHeight)
+                            {
+                                newWidth = rectWidth;
+                                newHeight = (int)(newWidth / aspect);
+                            }
+                            else
+                            {
+                                newHeight = rectHeight;
+                                newWidth = (int)(newHeight * aspect);
+                            }
+                        }
+                        resizedImage = new Bitmap(img0, newWidth, newHeight);
+                        pictureBox1.Image = resizedImage;
+
+                        pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+                        textBox4.Text = txt;
+                    }
+
                 }
+            }
             else
             {
-                MessageBox.Show("No Item is selected");
+                var rot = RotateFlipType.RotateNoneFlipNone;
+                var prop = img_file.GetPropertyItem(exifOrientationID);
+                int val = BitConverter.ToUInt16(prop.Value, 0);
+                //var rot = RotateFlipType.RotateNoneFlipNone;
+
+                if (val == 3 || val == 4)
+                    rot = RotateFlipType.Rotate180FlipNone;
+                else if (val == 5 || val == 6)
+                    rot = RotateFlipType.Rotate90FlipNone;
+                else if (val == 7 || val == 8)
+                    rot = RotateFlipType.Rotate270FlipNone;
+
+                if (val == 2 || val == 4 || val == 5 || val == 7)
+                    rot |= RotateFlipType.RotateNoneFlipX;
+
+
+                float filesize = new FileInfo(dataGridView1.SelectedRows[0].Cells[3].Value.ToString()).Length;
+
+                if (txt != null)
+                    if (filesize > 5000000)
+                    {
+                        pictureBox1.Image = null;
+                        textBox4.Text = txt;
+                        StringBuilder myStringBuilder = new StringBuilder("This image exceeds 5 MB: \n\n");
+                        myStringBuilder.Append(txt + "\n\n");
+                        myStringBuilder.Append("It may cause problems if the Photolog app tries to view it. \n\n" +
+                            "It is also likely to cause problems if you try and PUBLISH it in your Word Document. " +
+                        "Maybe you could try compressing the image or use a different one?");
+                        MessageBox.Show(myStringBuilder.ToString());
+                    }
+
+                    else
+                    {
+                        Image img;
+                        using (var bmpTemp = new Bitmap(txt))
+                        {
+
+
+                            img = new Bitmap(bmpTemp);
+
+                            int rectHeight = pictureBox1.Height;
+                            int rectWidth = pictureBox1.Width;
+
+                            //if the image is squared set it's height and width to the smallest of the desired dimensions (our box). In the current example rectHeight<rectWidth
+                            if (img.Height == img.Width)
+                            {
+                                resizedImage = new Bitmap(img, rectHeight, rectHeight);
+                            }
+                            else
+                            {
+                                //calculate aspect ratio
+                                float aspect = img.Width / (float)img.Height;
+                                int newWidth, newHeight;
+                                //calculate new dimensions based on aspect ratio
+                                newWidth = (int)(rectWidth * aspect);
+                                newHeight = (int)(newWidth / aspect);
+                                //if one of the two dimensions exceed the box dimensions
+                                if (newWidth > rectWidth || newHeight > rectHeight)
+                                {
+                                    //depending on which of the two exceeds the box dimensions set it as the box dimension and calculate the other one based on the aspect ratio
+                                    if (newWidth > newHeight)
+                                    {
+                                        newWidth = rectWidth;
+                                        newHeight = (int)(newWidth / aspect);
+                                    }
+                                    else
+                                    {
+                                        newHeight = rectHeight;
+                                        newWidth = (int)(newHeight * aspect);
+                                    }
+                                }
+                                resizedImage = new Bitmap(img, newWidth, newHeight);
+                                pictureBox1.Image = resizedImage;
+
+
+                                if (rot != RotateFlipType.RotateNoneFlipNone)
+                                    resizedImage.RotateFlip(rot);
+
+                                //bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                                pictureBox1.Image = resizedImage;
+                                //rotImage();
+                                pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+                                textBox4.Text = txt;
+                            }
+                            // Use default image viewer
+                            //Process.Start(txt);
+                        }
+                    }
             }
             capLength();
         }
+
 
 
         // METHOD - Rotate Image
@@ -1477,23 +1570,33 @@ namespace photolog
                                 var capt = dm2.Element("dataGridView1Caption").Value;
                                 var pth = dm2.Element("dataGridView1Path").Value;
                                 const int exifOrientationID = 0x112; //274
-                                var prop = img.GetPropertyItem(exifOrientationID);
-                                int val = BitConverter.ToUInt16(prop.Value, 0);
-                                var rot = RotateFlipType.RotateNoneFlipNone;
 
-                                if (val == 3 || val == 4)
-                                    rot = RotateFlipType.Rotate180FlipNone;
-                                else if (val == 5 || val == 6)
-                                    rot = RotateFlipType.Rotate90FlipNone;
-                                else if (val == 7 || val == 8)
-                                    rot = RotateFlipType.Rotate270FlipNone;
 
-                                if (val == 2 || val == 4 || val == 5 || val == 7)
-                                    rot |= RotateFlipType.RotateNoneFlipX;
+                                if (!img.PropertyIdList.Contains(exifOrientationID))
+                                {
+                                    dataGridView1.Rows.Add(fileName, img, capt, pth);
+                                }
+                                else
+                                {
+                                    var prop = img.GetPropertyItem(exifOrientationID);
+                                    int val = BitConverter.ToUInt16(prop.Value, 0);
+                                    var rot = RotateFlipType.RotateNoneFlipNone;
 
-                                if (rot != RotateFlipType.RotateNoneFlipNone)
-                                    img.RotateFlip(rot);
-                                dataGridView1.Rows.Add(fileName, img, capt, pth);
+                                    if (val == 3 || val == 4)
+                                        rot = RotateFlipType.Rotate180FlipNone;
+                                    else if (val == 5 || val == 6)
+                                        rot = RotateFlipType.Rotate90FlipNone;
+                                    else if (val == 7 || val == 8)
+                                        rot = RotateFlipType.Rotate270FlipNone;
+
+                                    if (val == 2 || val == 4 || val == 5 || val == 7)
+                                        rot |= RotateFlipType.RotateNoneFlipX;
+
+                                    if (rot != RotateFlipType.RotateNoneFlipNone)
+                                        img.RotateFlip(rot);
+                                    dataGridView1.Rows.Add(fileName, img, capt, pth);
+                                }
+
                             }
 
                         }
