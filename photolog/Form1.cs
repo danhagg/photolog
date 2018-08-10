@@ -122,7 +122,7 @@ namespace photolog
 
 
             // photolog version           
-            label5.Text = "PhotoLog v1.1";
+            label5.Text = "PhotoLog v1.2";
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -299,7 +299,7 @@ namespace photolog
                         }
                         dgLength();
                         dgLength();
-                        capLength();
+                        //capLength();
                         fileSize();
                         fileSizeTotal();
                         updatePictureBox();
@@ -473,7 +473,7 @@ namespace photolog
                         }
                         dataGridView1.CurrentCell = this.dataGridView1[1, totalRows];
                         dgLength();
-                        capLength();
+                        //capLength();
                         fileSize();
                         fileSizeTotal();
                         updatePictureBox();
@@ -519,7 +519,7 @@ namespace photolog
                         //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
                         dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
                         dgLength();
-                        capLength();
+                        //capLength();
                         fileSize();
                         fileSizeTotal();
                         updatePictureBox();
@@ -566,7 +566,7 @@ namespace photolog
                             
                         }
                         dgLength();
-                        capLength();
+                        //capLength();
                         fileSize();
                         fileSizeTotal();
                         updatePictureBox();
@@ -613,7 +613,7 @@ namespace photolog
 
                             }
                             dgLength();
-                            capLength();
+                            //capLength();
                             fileSize();
                             fileSizeTotal();
                             updatePictureBox();
@@ -661,7 +661,7 @@ namespace photolog
                             //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
                             dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
                             dgLength();
-                            capLength();
+                            //capLength();
                             fileSize();
                             fileSizeTotal();
                             updatePictureBox();
@@ -689,7 +689,7 @@ namespace photolog
                     dataGridView1.Rows[hti.RowIndex].Selected = true;
                     //updatePictureBox();
                     string txt = dataGridView1.CurrentRow.Cells[3].Value.ToString();
-                    img = new Bitmap(txt);                  
+                    img = new Bitmap(txt);
                     updatePictureBox();
                 }
                 catch
@@ -714,54 +714,54 @@ namespace photolog
             {
                 updatePictureBox();
             }
-            if (e.KeyCode == Keys.Delete)
-            {
-                if (dataGridView1.Rows.Count > 0 && dataGridView1.SelectedRows.Count > 0)
-                {
-                    int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
-                    int totalRows = dataGridView1.Rows.Count;
-                    Console.WriteLine("before {0}", rowIndex);
+            //if (e.KeyCode == Keys.Delete)
+            //{
+            //    if (dataGridView1.Rows.Count > 0 && dataGridView1.SelectedRows.Count > 0)
+            //    {
+            //        int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
+            //        int totalRows = dataGridView1.Rows.Count;
+            //        Console.WriteLine("before {0}", rowIndex);
 
-                    foreach (DataGridViewRow row in dataGridView1.SelectedRows)
-                    {
-                        if (rowIndex != -1 && dataGridView1.Rows.Count > 1)
-                        {
-                            dataGridView1.Rows.Remove(row);
-                            dataGridView1.ClearSelection();
-                            //dataGridView1.Rows[0].Selected = true;
-                            dgLength();
-                            fileSizeTotal();
-                            textBox2.Text = "";
-                            textBox3.Text = "";
-                            textBox4.Text = "";
-                            pictureBox1.Image = null;
-                            BarExample();
-                        }
-                        else
-                        {
-                            dataGridView1.Rows.Remove(row);
-                            dataGridView1.ClearSelection();
-                            dgLength();
-                            fileSizeTotal();
-                            textBox2.Text = "";
-                            textBox3.Text = "";
-                            textBox4.Text = "";
-                            pictureBox1.Image = null;
-                            BarExample();
-                        }
-                    }
-                }
-                else
-                {
-                    dgLength();
-                    textBox2.Text = "";
-                    textBox3.Text = "";
-                    textBox4.Text = "";
-                    pictureBox1.Image = null;
-                    BarExample();
-                    return;
-                }
-            }
+            //        foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            //        {
+            //            if (rowIndex != -1 && dataGridView1.Rows.Count > 1)
+            //            {
+            //                dataGridView1.Rows.Remove(row);
+            //                dataGridView1.ClearSelection();
+            //                //dataGridView1.Rows[0].Selected = true;
+            //                dgLength();
+            //                fileSizeTotal();
+            //                textBox2.Text = "";
+            //                textBox3.Text = "";
+            //                textBox4.Text = "";
+            //                pictureBox1.Image = null;
+            //                BarExample();
+            //            }
+            //            else
+            //            {
+            //                dataGridView1.Rows.Remove(row);
+            //                dataGridView1.ClearSelection();
+            //                dgLength();
+            //                fileSizeTotal();
+            //                textBox2.Text = "";
+            //                textBox3.Text = "";
+            //                textBox4.Text = "";
+            //                pictureBox1.Image = null;
+            //                BarExample();
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        dgLength();
+            //        textBox2.Text = "";
+            //        textBox3.Text = "";
+            //        textBox4.Text = "";
+            //        pictureBox1.Image = null;
+            //        BarExample();
+            //        return;
+            //    }
+            //}
             else
             {
                 return;
@@ -876,7 +876,7 @@ namespace photolog
                         //dataGridView1.Rows[0].Selected = true;
                         dgLength();
                         fileSizeTotal();
-                        textBox2.Text = "";
+                        //textBox2.Text = "";
                         textBox3.Text = "";
                         textBox4.Text = "";
                         pictureBox1.Image = null;
@@ -888,7 +888,7 @@ namespace photolog
                         dataGridView1.ClearSelection();
                         dgLength();
                         fileSizeTotal();
-                        textBox2.Text = "";
+                        //textBox2.Text = "";
                         textBox3.Text = "";
                         textBox4.Text = "";
                         pictureBox1.Image = null;
@@ -899,7 +899,7 @@ namespace photolog
             else
             {
                 dgLength();
-                textBox2.Text = "";
+                //textBox2.Text = "";
                 textBox3.Text = "";
                 textBox4.Text = "";
                 pictureBox1.Image = null;
@@ -1221,7 +1221,7 @@ namespace photolog
                         }
                     }
             }
-            capLength();
+            //capLength();
         }
 
 
@@ -1295,15 +1295,15 @@ namespace photolog
 
 
 
-        // Caption Cell click = update caption length
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (dataGridView1.CurrentCell.ColumnIndex.Equals(2) && e.RowIndex != -1)
-            {
-                if (dataGridView1.CurrentCell != null && dataGridView1.CurrentCell.Value != null)
-                    capLength();
-            }
-        }
+        //// Caption Cell click = update caption length
+        //private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (dataGridView1.CurrentCell.ColumnIndex.Equals(2) && e.RowIndex != -1)
+        //    {
+        //        if (dataGridView1.CurrentCell != null && dataGridView1.CurrentCell.Value != null)
+        //            //capLength();
+        //    }
+        //}
 
 
         // METHOD - calculate dataGridView1 Length
@@ -1314,15 +1314,15 @@ namespace photolog
         }
 
 
-        // METHOD - calculate caption Length
-        private void capLength()
-        {
-            if (dataGridView1.SelectedRows.Count > 0) // make sure user select at least 1 row 
-            {
-                string cap = dataGridView1.SelectedRows[0].Cells[2].Value.ToString();
-                textBox2.Text = cap.Length.ToString();
-            }
-        }
+        //// METHOD - calculate caption Length
+        //private void capLength()
+        //{
+        //    if (dataGridView1.SelectedRows.Count > 0) // make sure user select at least 1 row 
+        //    {
+        //        string cap = dataGridView1.SelectedRows[0].Cells[2].Value.ToString();
+        //        textBox2.Text = cap.Length.ToString();
+        //    }
+        //}
 
 
 
@@ -1615,7 +1615,7 @@ namespace photolog
                             MessageBox.Show(myStringBuilder.ToString());
                             dgLength();
                             dgLength();
-                            capLength();
+                            //capLength();
                             fileSize();
                             fileSizeTotal();
                             updatePictureBox();
@@ -1626,7 +1626,7 @@ namespace photolog
                         {
                             dgLength();
                             dgLength();
-                            capLength();
+                            //capLength();
                             fileSize();
                             fileSizeTotal();
                             updatePictureBox();
