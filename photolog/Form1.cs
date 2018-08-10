@@ -122,7 +122,7 @@ namespace photolog
 
 
             // photolog version           
-            label5.Text = "PhotoLog v1.2";
+            label5.Text = "PhotoLog v1.3";
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -1426,29 +1426,39 @@ namespace photolog
 
 
                     int exifOrientationID = 0x112; //274
+
+
                     Image img = Image.FromFile(fileName1);
-                    var prop = img.GetPropertyItem(exifOrientationID);
-                    int val = BitConverter.ToUInt16(prop.Value, 0);
-                    //MessageBox.Show(val.ToString());
-
-                    if (val == 5 || val == 6 || val == 7 || val == 8)
+                    if (!img.PropertyIdList.Contains(exifOrientationID))
                     {
-                        sh.Width = 252;
-
-                        if (sh.Height > 400)
-                        {
-                            sh.Height = 400;
-                        }
+                        sh.Height = 252;
                     }
                     else
                     {
-                        sh.Height = 252;
+                        var prop = img.GetPropertyItem(exifOrientationID);
+                        int val = BitConverter.ToUInt16(prop.Value, 0);
+                        //MessageBox.Show(val.ToString());
 
-                        if (sh.Width > 400)
+                        if (val == 5 || val == 6 || val == 7 || val == 8)
                         {
-                            sh.Width = 400;
+                            sh.Width = 252;
+
+                            if (sh.Height > 400)
+                            {
+                                sh.Height = 400;
+                            }
+                        }
+                        else
+                        {
+                            sh.Height = 252;
+
+                            if (sh.Width > 400)
+                            {
+                                sh.Width = 400;
+                            }
                         }
                     }
+                    
 
 
                     sh.Left = (float)WdShapePosition.wdShapeCenter;
