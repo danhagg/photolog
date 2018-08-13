@@ -1411,12 +1411,16 @@ namespace photolog
 
                     //int paraStartNumber = 4;
 
+
+                    rngTarget0.Paragraphs.TabStops.Add(42, WdTabAlignment.wdAlignTabRight);
                     rngTarget0.ListFormat.ApplyNumberDefault();
+                    
 
                     // Get image path and caption from dataGridView
                     string fileName1 = DGV.Rows[i].Cells[3].Value.ToString();
-                    string caption = DGV.Rows[i].Cells[2].Value.ToString();
+                    string caption = "" + DGV.Rows[i].Cells[2].Value.ToString();
                     caption = caption.TrimEnd('\r', '\n');
+                    //caption = caption.TrimStart('\t');
 
                     // Picture placement
                     //InlineShape pic = rngTarget1.InlineShapes.AddPicture(fileName1, ref oMissing, ref oMissing, ref anchor);
