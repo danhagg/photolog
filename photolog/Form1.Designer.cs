@@ -368,7 +368,6 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.chart1);
             this.Name = "Form1";
-            this.Text = "Photo Log";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
