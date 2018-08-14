@@ -26,23 +26,15 @@ namespace photolog
             this.FormClosing += Form1_FormClosing;
 
             //Create right click menu using contextmenustrip for right click move top bottom
-            ContextMenuStrip s = new ContextMenuStrip();
-            // add one right click menu item named as top and bottom          
+            ContextMenuStrip s = new ContextMenuStrip();     
             ToolStripMenuItem top = new ToolStripMenuItem();
-            //ToolStripMenuItem middle = new ToolStripMenuItem();
             ToolStripMenuItem bottom = new ToolStripMenuItem();
             top.Text = "Send to TOP";
-            //middle.Text = "Send to MIDDLE";
             bottom.Text = "Send to BOTTOM";
-            // add the clickevent of hello item
             top.Click += top_Click;
-            //middle.Click += middle_Click;
             bottom.Click += bottom_Click;
-            // add the item in right click menu
             s.Items.Add(top);
-            //s.Items.Add(middle);
             s.Items.Add(bottom);
-            // attach the right click menu with form
             this.ContextMenuStrip = s;
 
             this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseDown);
@@ -50,19 +42,13 @@ namespace photolog
 
             this.AllowDrop = true;
             this.dataGridView1.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
-            //this.DragOver += new DragEventHandler(Form1_DragOver);
-            //this.DragDrop += new DragEventHandler(Form1_DragDrop);
             this.dataGridView1.DragOver += new DragEventHandler(dataGridView1_DragOver);
             this.dataGridView1.DragDrop += new DragEventHandler(dataGridView1_DragDrop);
             this.dataGridView1.DragEnter += new DragEventHandler(dataGridView1_DragEnter);
             this.dataGridView1.AllowDrop = true;
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
-            //this.dataGridView1.GridColor = Color.BlueViolet;
             this.dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
-            //this.dataGridView1.RowsDefaultCellStyle.BackColor = Color.Bisque;
-            //this.dataGridView1.AlternatingRowsDefaultCellStyle.BackColor =
-            //    Color.Beige;
-            
+  
         }
 
 
@@ -73,34 +59,27 @@ namespace photolog
 
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(KeyEvent);
             this.KeyPreview = true;
-            // form resizing
+
+            // Form Size
             this.Load += new EventHandler(Form1_Load);
             this.AutoSize = true;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.FormBorderStyle = FormBorderStyle.Sizable;
             this.SizeGripStyle = SizeGripStyle.Auto;
             this.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-            //dataGridView1.MinimumSize = new Size(628, 879);
             dataGridView1.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-
-            //windows statemaximized
-            // Turn off form resizing and maximize
-            //FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
 
             // dataGridView1
             dataGridView1.RowTemplate.Height = 64;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.Columns["Caption"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.TopLeft;
+            //dataGridView1.Columns["Caption"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.TopLeft;
             dataGridView1.AllowDrop = true;
             dataGridView1.MultiSelect = true;
-
             dataGridView1.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-
             dataGridView1.Columns[1].DefaultCellStyle.Font = new System.Drawing.Font("Verdana", 10F);
             dataGridView1.Columns[2].DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
-
             dataGridView1.DefaultCellStyle.SelectionBackColor = Color.Blue;
             dataGridView1.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView1_CellPainting);
 
@@ -110,8 +89,6 @@ namespace photolog
 
             ToolTip toolTip1 = new ToolTip();
             toolTip1.SetToolTip(button2, "Make a Word document");
-            //toolTip1.SetToolTip(button1, "Rotation is only saved in your photolog project and NOT to your computer's file system");
-
 
             // Chart
             chart1.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
@@ -122,16 +99,15 @@ namespace photolog
 
 
             // photolog version           
-            label5.Text = "PhotoLog v1.3";
+            label5.Text = @"PhotoLog v1.4";
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
 
-            DialogResult dialogResult = MessageBox.Show("You  are exiting Photolog. You may lose unsaved  work. Are you sure you want to quit?", "Photolog warning", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show(@"You  are exiting Photolog. You may lose unsaved  work. Are you sure you want to quit?", "Photolog warning", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
-                return;
             }
             else
             {
@@ -269,6 +245,8 @@ namespace photolog
 
                             if (!img.PropertyIdList.Contains(exifOrientationID))
                             {
+
+
                                 var capt = dm2.Element("dataGridView1Caption").Value;
                                 var pth = fileNameFull;
                                 dataGridView1.Rows.Add(fileName, img, capt, pth);
@@ -291,6 +269,8 @@ namespace photolog
 
                                 if (rot != RotateFlipType.RotateNoneFlipNone)
                                     img.RotateFlip(rot);
+
+
                                 var capt = dm2.Element("dataGridView1Caption").Value;
                                 var pth = fileNameFull;
                                 dataGridView1.Rows.Add(fileName, img, capt, pth);
@@ -1581,7 +1561,7 @@ namespace photolog
                             else
                             {
                                 Image img = Image.FromFile(dm2.Element("dataGridView1Path").Value.ToString());
-                                var capt = dm2.Element("dataGridView1Caption").Value;
+                                var capt = dm2.Element("dataGridView1Caption")?.Value;
                                 var pth = dm2.Element("dataGridView1Path").Value;
                                 const int exifOrientationID = 0x112; //274
 
