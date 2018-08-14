@@ -6,7 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.ComponentModel;
 
-namespace DataGridViewRichTextBox
+namespace photolog
 {
     public class DataGridViewRichTextBoxColumn : DataGridViewColumn
     {
