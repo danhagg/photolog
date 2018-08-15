@@ -3,8 +3,11 @@ using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Forms.Design;
+using TextBox = System.Windows.Controls.TextBox;
+using System.Drawing;
 
 [Designer(typeof(ControlDesigner))]
 //[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.Serialization.CodeDomSerializer, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]

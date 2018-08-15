@@ -11,7 +11,6 @@ using System.Windows.Forms.DataVisualization.Charting;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
-using NHunspell;
 
 namespace photolog
 {
@@ -48,7 +47,6 @@ namespace photolog
             this.dataGridView1.AllowDrop = true;
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
             this.dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
-  
         }
 
 
@@ -57,7 +55,7 @@ namespace photolog
         {
             
 
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(KeyEvent);
+            this.KeyUp += new KeyEventHandler(KeyEvent);
             this.KeyPreview = true;
 
             // Form Size
@@ -74,7 +72,6 @@ namespace photolog
             dataGridView1.RowTemplate.Height = 64;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.AllowUserToAddRows = false;
-            //dataGridView1.Columns["Caption"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.TopLeft;
             dataGridView1.AllowDrop = true;
             dataGridView1.MultiSelect = true;
             dataGridView1.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
@@ -105,7 +102,7 @@ namespace photolog
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
 
-            DialogResult dialogResult = MessageBox.Show(@"You  are exiting Photolog. You may lose unsaved  work. Are you sure you want to quit?", "Photolog warning", MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show(@"You  are exiting Photolog. You may lose unsaved  work. Are you sure you want to quit?", @"Photolog warning", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
             }
@@ -116,81 +113,34 @@ namespace photolog
         }
 
 
-        /*
-         MENU OPTIONS
-         */
-
-        // MENU - Save as
-        private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DataSet dS = new DataSet();
-            //System.Data.DataTable dT1 = GetDataTableFromDGV0(dataGridView0);
-            System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
-
-            //dS.Tables.Add(dT1);
-            dS.Tables.Add(dT2);
-
-            //SaveFileDialog saveFileDialog = new SaveFileDialog();
-            //saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
-            //saveFileDialog.AddExtension = true;
-            //saveFileDialog.Title = "Save work as .XML file";
-
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            //saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
-            saveFileDialog.Filter = "photolog file (*.photolog)|*.photolog";
-            saveFileDialog.DefaultExt = "photolog";
-            saveFileDialog.AddExtension = true;
-            //saveFileDialog.Title = "Save work as .XML file";
-            saveFileDialog.Title = "Save work as .photolog file";
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                //dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
-                dS.WriteXml(saveFileDialog.FileName);
-                textBox6.Text = saveFileDialog.FileName;
-
-            }
-        }
-
-
         // MENU - Save
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            string path = textBox6.Text;
+            var path = textBox6.Text;
 
             if (path == "")
             {
-                //Console.WriteLine("empty");
-                DataSet dS = new DataSet();
-                //System.Data.DataTable dT1 = GetDataTableFromDGV0(dataGridView0);
-                System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
-
-                //dS.Tables.Add(dT1);
+                var dS = new DataSet();
+                var dT2 = GetDataTableFromDGV1(dataGridView1);
                 dS.Tables.Add(dT2);
-
-
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                //saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
-                saveFileDialog.Filter = "photolog file (*.photolog)|*.photolog";
-                saveFileDialog.DefaultExt = "photolog";
-                saveFileDialog.AddExtension = true;
-                //saveFileDialog.Title = "Save work as .XML file";
-                saveFileDialog.Title = "Save work as .photolog file";
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Filter = @"photolog file (*.photolog)|*.photolog",
+                    DefaultExt = "photolog",
+                    AddExtension = true,
+                    Title = @"Save work as .photolog file"
+                };
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    //dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
                     dS.WriteXml(saveFileDialog.FileName);
                     textBox6.Text = saveFileDialog.FileName;
-
                 }
             }
             else
             {
-                DataSet dS = new DataSet();
-                System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
+                var dS = new DataSet();
+                var dT2 = GetDataTableFromDGV1(dataGridView1);
                 dS.Tables.Add(dT2);
-                //dS.WriteXml(File.Open(path, FileMode.Create));
                 dS.WriteXml(textBox6.Text);
                 AutoClosingMessageBox.Show(textBox6.Text, "Saved", 3000);
             }
@@ -213,19 +163,18 @@ namespace photolog
         private void changeParentFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             const int exifOrientationID = 0x112; //274
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "photolog files (*.photolog; *.XML)| *.photolog; *.XML";
-            ofd.FilterIndex = 1;
-            ofd.Title = "Select .photolog file. The .photolog file must be in same folder as your images for this to work.";
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Filter = @"photolog files (*.photolog; *.XML)| *.photolog; *.XML",
+                FilterIndex = 1,
+                Title = @"Select .photolog file. The .photolog file must be in same folder as your images for this to work."
+            };
 
             // check user selects pass
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string xmlFileName = ofd.FileName;
-                // For updating textBox
-                string xmlFile = Path.GetFileName(xmlFileName);
                 string xmlFileDirectory = Path.GetDirectoryName(xmlFileName);
-                //MessageBox.Show(xmlFileDirectory);
 
                 dataGridView1.Rows.Clear();
 
@@ -245,9 +194,7 @@ namespace photolog
 
                             if (!img.PropertyIdList.Contains(exifOrientationID))
                             {
-
-
-                                var capt = dm2.Element("dataGridView1Caption").Value;
+                                var capt = dm2.Element("dataGridView1Caption")?.Value;
                                 var pth = fileNameFull;
                                 dataGridView1.Rows.Add(fileName, img, capt, pth);
                             }
@@ -270,14 +217,12 @@ namespace photolog
                                 if (rot != RotateFlipType.RotateNoneFlipNone)
                                     img.RotateFlip(rot);
 
-
-                                var capt = dm2.Element("dataGridView1Caption").Value;
+                                var capt = dm2.Element("dataGridView1Caption")?.Value;
                                 var pth = fileNameFull;
                                 dataGridView1.Rows.Add(fileName, img, capt, pth);
                             }                             
 
                         }
-                        dgLength();
                         dgLength();
                         //capLength();
                         fileSize();
@@ -345,34 +290,10 @@ namespace photolog
             using (SolidBrush b = new SolidBrush(dataGridView1.RowHeadersDefaultCellStyle.ForeColor))
             {
                 e.Graphics.DrawString((e.RowIndex + 1).ToString(), e.InheritedRowStyle.Font, b, e.RowBounds.Location.X + 10, e.RowBounds.Location.Y + 4);
-                //e.Graphics.DrawString((e.RowIndex + 10).ToString(), e.InheritedRowStyle.Font, b, e.RowBounds.Location.X + 10, e.RowBounds.Location.Y + 4);
             }
         }
 
 
-        /*
-        Image img = Image.FromFile(dm2.Element("dataGridView1Path").Value.ToString());
-
-        
-        var prop = img.GetPropertyItem(exifOrientationID);
-        int val = BitConverter.ToUInt16(prop.Value, 0);
-        var rot = RotateFlipType.RotateNoneFlipNone;
-
-        if (val == 3 || val == 4)
-            rot = RotateFlipType.Rotate180FlipNone;
-        else if (val == 5 || val == 6)
-            rot = RotateFlipType.Rotate90FlipNone;
-        else if (val == 7 || val == 8)
-            rot = RotateFlipType.Rotate270FlipNone;
-
-        if (val == 2 || val == 4 || val == 5 || val == 7)
-            rot |= RotateFlipType.RotateNoneFlipX;
-
-        if (rot != RotateFlipType.RotateNoneFlipNone)
-            img.RotateFlip(rot);
-        dataGridView1.Rows.Add(fileName, img, capt, pth);
-
-        */
 
         // MENU - Drag & Drop Individual Images
         void dataGridView1_DragDrop(object sender, DragEventArgs e)
@@ -753,23 +674,21 @@ namespace photolog
 
 
         // Key Up and Down
-        //protected override bool ProcessCmdKey(ref Message msg, Keys keyData)       
-        //{
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
 
-
-        //if (keyData == Keys.Up)
-        //{
-        //    moveUp();
-        //    return true;
-        //}
-        //else if (keyData == Keys.Down)
-        //{
-        //    moveDown();
-        //    return true;
-        //}
-        //else 
-
-        //}
+            if (keyData == Keys.Up)
+            {
+                moveUp();
+                return true;
+            }
+            if (keyData == Keys.Down)
+            {
+                moveDown();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
 
         // BUTTON UP
         private void button3_Click_1(object sender, EventArgs e)
@@ -1338,19 +1257,6 @@ namespace photolog
 
         }
 
-        private bool _IsOn;
-        public bool IsOn
-        {
-            get
-            {
-                return _IsOn;
-            }
-            set
-            {
-                _IsOn = value;
-                button2.Text = _IsOn ? "On" : "Off";
-            }
-        }
 
 
         // METHOD - Create the Word doc
@@ -1455,23 +1361,6 @@ namespace photolog
                     //rngTarget1.InsertParagraphAfter();                
                 }
 
-                // Windows runs as default at 96dpi (display) Macs run as default at 72 dpi (display)
-                // Assuming 72 points per inch
-                // 3.5 inches is 3.5*72 = 252
-                // 3.25 inches is 3.25*72 = 234
-                /*
-                foreach (Shape ilPicture in oDoc.Shapes)
-                {
-                    //ilPicture.{compress the picture}
-                }
-                */
-
-                /*
-                foreach (Shape ilPicture in oDoc.Shapes)
-                {
-                    //ilPicture.{ROTATE}
-                }
-                */
             }
         }
 
@@ -1742,51 +1631,6 @@ namespace photolog
         }
 
 
-
-
-
-
-
-
-
-        //private void button5_Click(object sender, EventArgs e)
-        //{
-        //    richTextBox1.Text = dataGridView1.CurrentRow.Cells[2].Value.ToString();
-
-        //    var incorrectWords = new List<string>();
-        //    string myText = richTextBox1.Text;
-        //    string[] wordBag = myText.Split(' ');
-        //    Hunspell english = new Hunspell("en_US.aff", "index.dic");
-
-        //    foreach (var word in wordBag)
-        //    {
-        //        bool isExist = english.Spell(word);
-        //        if (!isExist) incorrectWords.Add(word);
-        //    }
-
-
-
-        //    this.richTextBox1.Text += " ";
-        //    this.richTextBox1.SelectionStart = 0;
-        //    this.richTextBox1.SelectionLength = this.richTextBox1.Text.Length - 1;
-        //    richTextBox1.SelectionFont = new System.Drawing.Font(richTextBox1.SelectionFont, FontStyle.Underline);
-        //    this.richTextBox1.SelectionLength = 0;
-        //    //MessageBox.Show(incorrectWords.ToString());
-        //}
-
-        //private void button5_Click(object sender, EventArgs e)
-        //{
-        //    MessageBox.Show("f");
-        //    Hunspell hunspell = new Hunspell("en_US.aff", "en_US.oxt");
-        //    Console.WriteLine("Let's determine if technical is spelled correctly.");
-
-
-        //    bool check = hunspell.Spell("yes");
-
-
-        //    Console.WriteLine("The word (technical) is " + (check ? "right." : "wrong."));
-        //}
-
     }
 }
 
@@ -1795,6 +1639,41 @@ namespace photolog
 
 
 /*
+
+
+     private void toSpell()
+        {
+            if (dataGridView1.SelectedRows.Count > 0) // make sure user select at least 1 row 
+            {
+                string cap = dataGridView1.SelectedRows[0].Cells[2].Value.ToString();
+                spellBox1.Text = cap;
+            }
+        }
+
+
+        private void textBox1_TextChanged_1(object sender, EventArgs e)
+        {
+            spellBox1.Text = textBox1.Text;
+        }
+
+        Control cnt;
+
+        void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            e.Control.TextChanged += new EventHandler(tb_TextChanged);
+            cnt = e.Control;
+            cnt.TextChanged += tb_TextChanged;
+        }
+
+        void tb_TextChanged(object sender, EventArgs e)
+        {
+            if (cnt.Text != string.Empty)
+            {
+                spellBox1.Text = cnt.Text;
+               
+            }
+        }
+
         // METHOD - Vary image quality
         private void VaryQualityLevel()
         {
