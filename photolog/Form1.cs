@@ -260,7 +260,7 @@ namespace photolog
                                 DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0) return;                  // no image in the header
-            if (e.ColumnIndex == this.dataGridView1.Columns["imageColumn"].Index)
+            if (e.ColumnIndex == dataGridView1.Columns["imageColumn"].Index)
 
             {
                 e.PaintBackground(e.ClipBounds, false);  // no highlighting
@@ -468,7 +468,7 @@ namespace photolog
                         fileSizeTotal();
                         updatePictureBox();
                         BarExample();
-                        //MessageBox.Show("copy to empty");
+
                     }
                     // For loading into an already populated dataGridView1 at empty row
                     else
@@ -582,7 +582,6 @@ namespace photolog
                     var hti = dataGridView1.HitTest(e.X, e.Y);
                     dataGridView1.ClearSelection();
                     dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
-                    //dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[1];
                     dataGridView1.Rows[hti.RowIndex].Selected = true;
                     //updatePictureBox();
                     string txt = dataGridView1.CurrentRow.Cells[3].Value.ToString();
@@ -611,54 +610,6 @@ namespace photolog
             {
                 updatePictureBox();
             }
-            //if (e.KeyCode == Keys.Delete)
-            //{
-            //    if (dataGridView1.Rows.Count > 0 && dataGridView1.SelectedRows.Count > 0)
-            //    {
-            //        int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
-            //        int totalRows = dataGridView1.Rows.Count;
-            //        Console.WriteLine("before {0}", rowIndex);
-
-            //        foreach (DataGridViewRow row in dataGridView1.SelectedRows)
-            //        {
-            //            if (rowIndex != -1 && dataGridView1.Rows.Count > 1)
-            //            {
-            //                dataGridView1.Rows.Remove(row);
-            //                dataGridView1.ClearSelection();
-            //                //dataGridView1.Rows[0].Selected = true;
-            //                dgLength();
-            //                fileSizeTotal();
-            //                textBox2.Text = "";
-            //                textBox3.Text = "";
-            //                textBox4.Text = "";
-            //                pictureBox1.Image = null;
-            //                BarExample();
-            //            }
-            //            else
-            //            {
-            //                dataGridView1.Rows.Remove(row);
-            //                dataGridView1.ClearSelection();
-            //                dgLength();
-            //                fileSizeTotal();
-            //                textBox2.Text = "";
-            //                textBox3.Text = "";
-            //                textBox4.Text = "";
-            //                pictureBox1.Image = null;
-            //                BarExample();
-            //            }
-            //        }
-            //    }
-            //    else
-            //    {
-            //        dgLength();
-            //        textBox2.Text = "";
-            //        textBox3.Text = "";
-            //        textBox4.Text = "";
-            //        pictureBox1.Image = null;
-            //        BarExample();
-            //        return;
-            //    }
-            //}
             else
             {
                 return;
@@ -759,48 +710,22 @@ namespace photolog
             if (dataGridView1.Rows.Count > 0 && dataGridView1.SelectedRows.Count > 0)
             {
                 int rowIndex = dataGridView1.SelectedCells[0].OwningRow.Index;
-                int totalRows = dataGridView1.Rows.Count;
-                Console.WriteLine("before {0}", rowIndex);
 
                 foreach (DataGridViewRow row in dataGridView1.SelectedRows)
                 {
-                    if (rowIndex != -1 && dataGridView1.Rows.Count > 1)
+                    if (rowIndex != -1 && dataGridView1.Rows.Count >= 1)
                     {
                         dataGridView1.Rows.Remove(row);
                         dataGridView1.ClearSelection();
-                        dgLength();
-                        fileSizeTotal();
-                        textBox3.Text = "";
-                        textBox4.Text = "";
-                        pictureBox1.Image = null;
-                        BarExample();
-                    }
-                    else
-                    {
-                        dataGridView1.Rows.Remove(row);
-                        dataGridView1.ClearSelection();
-                        dgLength();
-                        fileSizeTotal();
-                        //textBox2.Text = "";
-                        textBox3.Text = "";
-                        textBox4.Text = "";
-                        pictureBox1.Image = null;
-                        BarExample();
                     }
                 }
             }
-            else
-            {
-                dgLength();
-                //textBox2.Text = "";
-                textBox3.Text = "";
-                textBox4.Text = "";
-                pictureBox1.Image = null;
-                BarExample();
-                return;
-            }
-
-
+            dgLength();
+            textBox3.Text = "";
+            textBox4.Text = "";
+            pictureBox1.Image = null;
+            BarExample();
+            fileSizeTotal();
         }
 
 
