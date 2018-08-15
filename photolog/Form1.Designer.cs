@@ -48,7 +48,6 @@
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeParentFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addMultipleTempFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,11 +82,11 @@
             this.imageColumn,
             this.Caption,
             this.FilePath});
-            this.dataGridView1.Location = new System.Drawing.Point(11, 87);
+            this.dataGridView1.Location = new System.Drawing.Point(11, 88);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dataGridView1.Size = new System.Drawing.Size(628, 762);
+            this.dataGridView1.Size = new System.Drawing.Size(628, 761);
             this.dataGridView1.TabIndex = 11;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
@@ -225,7 +224,6 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveToolStripMenuItem,
-            this.saveProjectToolStripMenuItem,
             this.resumeToolStripMenuItem,
             this.changeParentFolderToolStripMenuItem,
             this.addMultipleTempFilesToolStripMenuItem});
@@ -239,13 +237,6 @@
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
-            // 
-            // saveProjectToolStripMenuItem
-            // 
-            this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
-            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
-            this.saveProjectToolStripMenuItem.Text = "Save as";
-            this.saveProjectToolStripMenuItem.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
             // resumeToolStripMenuItem
             // 
@@ -328,7 +319,7 @@
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(1178, 693);
+            this.textBox5.Location = new System.Drawing.Point(1186, 693);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(49, 20);
             this.textBox5.TabIndex = 59;
@@ -337,7 +328,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.SystemColors.Window;
-            this.label1.Location = new System.Drawing.Point(1119, 697);
+            this.label1.Location = new System.Drawing.Point(1127, 697);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(56, 13);
             this.label1.TabIndex = 60;
@@ -398,7 +389,6 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resumeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changeParentFolderToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
