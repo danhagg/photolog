@@ -188,8 +188,8 @@ namespace photolog
                         {
                             string fileName = dm2.Element("fileName").Value;
                             string temp = dm2.Element("dataGridView1Path").Value.ToString();
-                            string file_ext = Path.GetFileName(temp);
-                            string fileNameFull = xmlFileDirectory + '\\' + file_ext;
+                            string fileExt = Path.GetFileName(temp);
+                            string fileNameFull = xmlFileDirectory + '\\' + fileExt;
                             Image img = Image.FromFile(fileNameFull);
 
                             if (!img.PropertyIdList.Contains(exifOrientationID))
@@ -266,19 +266,15 @@ namespace photolog
                 e.PaintBackground(e.ClipBounds, false);  // no highlighting
                 e.PaintContent(e.ClipBounds);
 
-                // calculate the location of your text..:
                 int y = e.CellBounds.Bottom - 17;         // your  font height
-
                 string mystring = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
                 var result = mystring.Substring(mystring.Length - Math.Min(4, mystring.Length));
 
                 System.Drawing.Rectangle rect = new System.Drawing.Rectangle(e.CellBounds.Location.X + 1, e.CellBounds.Location.Y + 49, 35, 14);
                 e.Graphics.FillRectangle(Brushes.White, rect);
-
                 e.Graphics.DrawString(result, e.CellStyle.Font,
                 Brushes.Crimson, e.CellBounds.Left, y);
 
-                //e.PaintContent(rect);
                 e.Handled = true;                        // done with the image column 
             }
         }
@@ -679,12 +675,12 @@ namespace photolog
 
             if (keyData == Keys.Up)
             {
-                moveUp();
+                MoveUp();
                 return true;
             }
             if (keyData == Keys.Down)
             {
-                moveDown();
+                MoveDown();
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
@@ -693,14 +689,14 @@ namespace photolog
         // BUTTON UP
         private void button3_Click_1(object sender, EventArgs e)
         {
-            moveUp();
+            MoveUp();
         }
 
 
         // BUTTON DOWN
         private void button4_Click(object sender, EventArgs e)
         {
-            moveDown();
+            MoveDown();
         }
 
 
@@ -772,10 +768,8 @@ namespace photolog
                     {
                         dataGridView1.Rows.Remove(row);
                         dataGridView1.ClearSelection();
-                        //dataGridView1.Rows[0].Selected = true;
                         dgLength();
                         fileSizeTotal();
-                        //textBox2.Text = "";
                         textBox3.Text = "";
                         textBox4.Text = "";
                         pictureBox1.Image = null;
@@ -1550,7 +1544,7 @@ namespace photolog
 
 
         // MOVE UP FUNCTION
-        private void moveUp()
+        private void MoveUp()
         {
 
             if (dataGridView1.Rows.Count == 0) return;
@@ -1592,7 +1586,7 @@ namespace photolog
 
 
         // MOVE DOWN FUNCTION
-        private void moveDown()
+        private void MoveDown()
         {
             if (dataGridView1.Rows.Count == 0) return;
 
