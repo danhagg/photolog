@@ -64,11 +64,13 @@ namespace photolog
             this.Load += new EventHandler(Form1_Load);
             this.AutoSize = true;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            this.FormBorderStyle = FormBorderStyle.Sizable;
-            this.SizeGripStyle = SizeGripStyle.Auto;
-            this.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-            dataGridView1.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-            MaximizeBox = false;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            FormBorderStyle = FormBorderStyle.Sizable;
+            //this.FormBorderStyle = FormBorderStyle.Sizable;
+            //this.SizeGripStyle = SizeGripStyle.Auto;
+            //this.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            //dataGridView1.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            //MaximizeBox = false;
 
             // dataGridView1
             dataGridView1.RowTemplate.Height = 64;
