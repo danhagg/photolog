@@ -202,22 +202,8 @@ namespace photolog
                             }
                             else
                             {
-                                var prop = img.GetPropertyItem(exifOrientationID);
-                                int val = BitConverter.ToUInt16(prop.Value, 0);
-                                var rot = RotateFlipType.RotateNoneFlipNone;
 
-                                if (val == 3 || val == 4)
-                                    rot = RotateFlipType.Rotate180FlipNone;
-                                else if (val == 5 || val == 6)
-                                    rot = RotateFlipType.Rotate90FlipNone;
-                                else if (val == 7 || val == 8)
-                                    rot = RotateFlipType.Rotate270FlipNone;
-
-                                if (val == 2 || val == 4 || val == 5 || val == 7)
-                                    rot |= RotateFlipType.RotateNoneFlipX;
-
-                                if (rot != RotateFlipType.RotateNoneFlipNone)
-                                    img.RotateFlip(rot);
+                                RotImage(img);
 
                                 var capt = dm2.Element("dataGridView1Caption")?.Value;
                                 var pth = fileNameFull;
@@ -296,8 +282,6 @@ namespace photolog
         // MENU - Drag & Drop Individual Images
         void dataGridView1_DragDrop(object sender, DragEventArgs e)
         {
-            //const int exifOrientationID = 0x112; //274
-
             System.Drawing.Point clientPoint = dataGridView1.PointToClient(new System.Drawing.Point(e.X, e.Y));
             // Get the row index of the item the mouse is below. 
             int rowIndexOfItemUnderMouseToDrop =
@@ -352,8 +336,6 @@ namespace photolog
                                 dataGridView1.Rows.Insert(totalRows + i, row);
                             }
                             
-                            // Add at index under mouse for first and + i for rest
-                            //dataGridView1.Rows.Insert(totalRows + i, row);
                         }
                         dataGridView1.CurrentCell = this.dataGridView1[1, totalRows];
                         dgLength();
@@ -482,7 +464,7 @@ namespace photolog
                                 }
                                 
                             }
-                            // Move highlighted + slected to top of that index
+
                             //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
                             dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
                             dgLength();
@@ -491,7 +473,6 @@ namespace photolog
                             fileSizeTotal();
                             updatePictureBox();
                             BarExample();
-                            //MessageBox.Show("copy to populated occupied cell");
                         }
                     }
                 }
@@ -511,7 +492,6 @@ namespace photolog
                     dataGridView1.ClearSelection();
                     dataGridView1.CurrentCell = dataGridView1.Rows[hti.RowIndex].Cells[hti.ColumnIndex];
                     dataGridView1.Rows[hti.RowIndex].Selected = true;
-                    //updatePictureBox();
                     string txt = dataGridView1.CurrentRow.Cells[3].Value.ToString();
                     img = new Bitmap(txt);
                     updatePictureBox();
@@ -546,22 +526,22 @@ namespace photolog
         }
 
 
-        // Key Up and Down
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
+        //// Key Up and Down
+        //protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        //{
 
-            if (keyData == Keys.Up)
-            {
-                MoveUp();
-                return true;
-            }
-            if (keyData == Keys.Down)
-            {
-                MoveDown();
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
+        //    if (keyData == Keys.Up)
+        //    {
+        //        MoveUp();
+        //        return true;
+        //    }
+        //    if (keyData == Keys.Down)
+        //    {
+        //        MoveDown();
+        //        return true;
+        //    }
+        //    return base.ProcessCmdKey(ref msg, keyData);
+        //}
 
         // BUTTON UP
         private void button3_Click_1(object sender, EventArgs e)
@@ -817,13 +797,12 @@ namespace photolog
         // update pictureBox
         private void updatePictureBox()
         {
-            //const int exifOrientationID = 0x112; //274
 
-            fileSize();
+            //fileSize();
 
             Bitmap resizedImage;
 
-            String txt = dataGridView1.CurrentRow.Cells[3].Value.ToString();
+            String txt = dataGridView1.CurrentRow?.Cells[3].Value.ToString();
 
             Image img_file = Image.FromFile(txt);
 
@@ -954,14 +933,11 @@ namespace photolog
                                 if (rot != RotateFlipType.RotateNoneFlipNone)
                                     resizedImage.RotateFlip(rot);
 
-                                //bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                                pictureBox1.Image = resizedImage;
-                                //rotImage();
+                                pictureBox1.Image = resizedImage; 
                                 pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
                                 textBox4.Text = txt;
                             }
-                            // Use default image viewer
-                            //Process.Start(txt);
+
                         }
                     }
             }
@@ -1279,22 +1255,7 @@ namespace photolog
                                 }
                                 else
                                 {
-                                    //var prop = img.GetPropertyItem(exifOrientationID);
-                                    //int val = BitConverter.ToUInt16(prop.Value, 0);
-                                    //var rot = RotateFlipType.RotateNoneFlipNone;
 
-                                    //if (val == 3 || val == 4)
-                                    //    rot = RotateFlipType.Rotate180FlipNone;
-                                    //else if (val == 5 || val == 6)
-                                    //    rot = RotateFlipType.Rotate90FlipNone;
-                                    //else if (val == 7 || val == 8)
-                                    //    rot = RotateFlipType.Rotate270FlipNone;
-
-                                    //if (val == 2 || val == 4 || val == 5 || val == 7)
-                                    //    rot |= RotateFlipType.RotateNoneFlipX;
-
-                                    //if (rot != RotateFlipType.RotateNoneFlipNone)
-                                    //    img.RotateFlip(rot);
                                     RotImage(img);
                                     dataGridView1.Rows.Add(fileName, img, capt, pth);
                                 }
@@ -1414,7 +1375,7 @@ namespace photolog
 
                 if (selRowIndex > 0)
                 {
-                    //dataGridView1.CurrentCell = dataGridView1.Rows[selRowIndex - 1].Cells[1];
+                    dataGridView1.CurrentCell = dataGridView1.Rows[selRowIndex - 1].Cells[1];
                     dataGridView1.Rows.Remove(SelectedRows[i]);
                     dataGridView1.Rows.Insert(selRowIndex - 1, SelectedRows[i]);
                     dataGridView1.CurrentCell.Selected = false;
