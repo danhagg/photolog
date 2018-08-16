@@ -30,8 +30,8 @@ namespace photolog
             ContextMenuStrip s = new ContextMenuStrip();     
             ToolStripMenuItem top = new ToolStripMenuItem();
             ToolStripMenuItem bottom = new ToolStripMenuItem();
-            top.Text = "Send to TOP";
-            bottom.Text = "Send to BOTTOM";
+            top.Text = @"Send to TOP";
+            bottom.Text = @"Send to BOTTOM";
             top.Click += top_Click;
             bottom.Click += bottom_Click;
             s.Items.Add(top);
@@ -55,22 +55,15 @@ namespace photolog
         // Set Form listView and datGridView properties on load
         private void Form1_Load(object sender, EventArgs e)
         {
-            
-
             this.KeyUp += new KeyEventHandler(KeyEvent);
             this.KeyPreview = true;
 
-            // Form Size
+            // Form Size and Scale
             this.Load += new EventHandler(Form1_Load);
             this.AutoSize = true;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             FormBorderStyle = FormBorderStyle.Sizable;
-            //this.FormBorderStyle = FormBorderStyle.Sizable;
-            //this.SizeGripStyle = SizeGripStyle.Auto;
-            //this.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-            //dataGridView1.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-            //MaximizeBox = false;
 
             // dataGridView1
             dataGridView1.RowTemplate.Height = 64;
@@ -84,10 +77,10 @@ namespace photolog
             dataGridView1.DefaultCellStyle.SelectionBackColor = Color.Blue;
             dataGridView1.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView1_CellPainting);
 
-
             // pictureBox1
             pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
 
+            // Tool tips
             ToolTip toolTip1 = new ToolTip();
             toolTip1.SetToolTip(button2, "Make a Word document");
 
@@ -97,7 +90,6 @@ namespace photolog
             chart1.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
             chart1.ChartAreas[0].AxisY.MinorGrid.Enabled = false;
             chart1.ChartAreas[0].AxisX.ScrollBar.Enabled = true;
-
 
             // photolog version           
             label5.Text = @"PhotoLog v1.4";
@@ -190,8 +182,8 @@ namespace photolog
                     {
                         foreach (var dm2 in doc.Descendants("Table1"))
                         {
-                            string fileName = dm2.Element("fileName").Value;
-                            string temp = dm2.Element("dataGridView1Path").Value.ToString();
+                            string fileName = dm2.Element("fileName")?.Value;
+                            string temp = dm2.Element("dataGridView1Path")?.Value.ToString();
                             string fileExt = Path.GetFileName(temp);
                             string fileNameFull = xmlFileDirectory + '\\' + fileExt;
                             Image img = Image.FromFile(fileNameFull);
@@ -213,7 +205,6 @@ namespace photolog
                             }                             
 
                         }
-                        dgLength();
                         //capLength();
                         fileSize();
                         fileSizeTotal();
@@ -340,7 +331,6 @@ namespace photolog
                             
                         }
                         dataGridView1.CurrentCell = this.dataGridView1[1, totalRows];
-                        dgLength();
                         //capLength();
                         fileSize();
                         fileSizeTotal();
@@ -372,7 +362,6 @@ namespace photolog
                         // Move highlighted + slected to top of that index
                         //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
                         dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
-                        dgLength();
                         //capLength();
                         fileSize();
                         fileSizeTotal();
@@ -404,7 +393,6 @@ namespace photolog
                             }
                             
                         }
-                        dgLength();
                         //capLength();
                         fileSize();
                         fileSizeTotal();
@@ -436,7 +424,6 @@ namespace photolog
                                 }
 
                             }
-                            dgLength();
                             //capLength();
                             fileSize();
                             fileSizeTotal();
@@ -469,7 +456,6 @@ namespace photolog
 
                             //dataGridView1.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
                             dataGridView1.CurrentCell = this.dataGridView1[1, rowIndexOfItemUnderMouseToDrop];
-                            dgLength();
                             //capLength();
                             fileSize();
                             fileSizeTotal();
@@ -628,7 +614,6 @@ namespace photolog
                     }
                 }
             }
-            dgLength();
             textBox3.Text = "";
             textBox4.Text = "";
             pictureBox1.Image = null;
@@ -800,7 +785,7 @@ namespace photolog
         private void updatePictureBox()
         {
 
-            //fileSize();
+            fileSize();
 
             Bitmap resizedImage;
 
@@ -959,15 +944,14 @@ namespace photolog
                 //float filesize = (File.OpenRead(dataGridView1.SelectedRows[0].Cells[3].Value.ToString())).Length;
                 n = filesize / 1048576;
                 d = filesize % 1048576;
-                //textBox3.Text = filesize.ToString();
                 textBox3.Text = n.ToString("n2");
                 if (n > 2)
                 {
-                    textBox3.BackColor = System.Drawing.Color.Red;
+                    textBox3.BackColor = Color.Red;
                 }
                 else if (n < 2)
                 {
-                    textBox3.BackColor = System.Drawing.Color.White;
+                    textBox3.BackColor = Color.White;
                 }
             }
         }
@@ -1002,14 +986,6 @@ namespace photolog
         //            //capLength();
         //    }
         //}
-
-
-        // METHOD - calculate dataGridView1 Length
-        private void dgLength()
-        {
-            int dgRows = dataGridView1.Rows.Count;
-            //textBox1.Text = dgRows.ToString();
-        }
 
 
         //// METHOD - calculate caption Length
@@ -1278,8 +1254,7 @@ namespace photolog
 
                             myStringBuilder.Append("\n\nBut they were already in the existing list and were NOT loaded. \n\n");
                             MessageBox.Show(myStringBuilder.ToString());
-                            dgLength();
-                            dgLength();
+
                             //capLength();
                             fileSize();
                             fileSizeTotal();
@@ -1289,8 +1264,6 @@ namespace photolog
                         }
                         else
                         {
-                            dgLength();
-                            dgLength();
                             //capLength();
                             fileSize();
                             fileSizeTotal();
@@ -1432,6 +1405,15 @@ namespace photolog
             BarExample();
         }
 
+        private void standardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dataGridView1.Columns[2].DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+        }
+
+        private void largeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dataGridView1.Columns[2].DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 14F);
+        }
 
     }
 }
