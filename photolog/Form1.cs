@@ -506,30 +506,9 @@ namespace photolog
             {
                 updatePictureBox();
             }
-            else
-            {
-                return;
-                //MessageBox.Show("No Function");
-            }
+
         }
 
-
-        //// Key Up and Down
-        //protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        //{
-
-        //    if (keyData == Keys.Up)
-        //    {
-        //        MoveUp();
-        //        return true;
-        //    }
-        //    if (keyData == Keys.Down)
-        //    {
-        //        MoveDown();
-        //        return true;
-        //    }
-        //    return base.ProcessCmdKey(ref msg, keyData);
-        //}
 
         // BUTTON UP
         private void button3_Click_1(object sender, EventArgs e)
@@ -932,8 +911,6 @@ namespace photolog
         }
 
 
-
-
         // METHOD - Calculate Image size
         private void fileSize()
         {
@@ -1233,13 +1210,10 @@ namespace photolog
                                 }
                                 else
                                 {
-
                                     RotImage(img);
                                     dataGridView1.Rows.Add(fileName, img, capt, pth);
                                 }
-
                             }
-
                         }
                         if (collisions.Count > 0)
                         {
@@ -1254,7 +1228,7 @@ namespace photolog
 
                             myStringBuilder.Append("\n\nBut they were already in the existing list and were NOT loaded. \n\n");
                             MessageBox.Show(myStringBuilder.ToString());
-
+ 
                             //capLength();
                             fileSize();
                             fileSizeTotal();
@@ -1278,9 +1252,7 @@ namespace photolog
                             {
                                 textBox6.Text = "";
                             }
-
                         }
-
                     }
                     // Error
                     catch (Exception exc)
