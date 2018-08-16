@@ -1,5 +1,12 @@
-Photolog_Desktop v1.1
+Photolog_Desktop v1.4
 dhaggerty@pronetgroup.com
+
+New in v1.4
+
+Make full screen option
+
+Enlarged font option
+
 
 New in v1.1
 

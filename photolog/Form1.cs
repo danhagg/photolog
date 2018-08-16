@@ -1072,7 +1072,13 @@ namespace photolog
                     Image img = Image.FromFile(fileName1);
                     if (!img.PropertyIdList.Contains(exifOrientationID))
                     {
+                        // Scale the height here for pics with no EXIF
                         sh.Height = 252;
+
+                        if (sh.Width > 400)
+                        {
+                            sh.Width = 400;
+                        }
                     }
                     else
                     {
