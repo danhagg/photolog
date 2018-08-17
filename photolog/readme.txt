@@ -7,6 +7,37 @@ Make full screen option
 
 Enlarged font option
 
+Captions numbered from 100+ do not have strange indent
+
+Many bug fixes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 New in v1.1
 
