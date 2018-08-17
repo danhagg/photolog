@@ -26,6 +26,7 @@ namespace photolog
 
             this.FormClosing += Form1_FormClosing;
 
+
             //Create right click menu using contextmenustrip for right click move top bottom
             ContextMenuStrip s = new ContextMenuStrip();     
             ToolStripMenuItem top = new ToolStripMenuItem();
@@ -498,6 +499,11 @@ namespace photolog
         {
             if (e.Button == MouseButtons.Left)
             {
+                if (ModifierKeys == Keys.Control || ModifierKeys == Keys.Shift)
+                {
+                    return;
+                }
+
                 Image img;
                 try
                 {
@@ -523,15 +529,16 @@ namespace photolog
             {
                 updatePictureBox();
             }
+
             if (e.KeyCode == Keys.Up)
             {
                 updatePictureBox();
             }
+
             if (e.KeyCode == Keys.Down)
             {
                 updatePictureBox();
             }
-
         }
 
 

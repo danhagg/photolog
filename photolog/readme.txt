@@ -3,13 +3,16 @@ dhaggerty@pronetgroup.com
 
 New in v1.4
 
-Make full screen option
+Shift + Mouse click selects multiple linked rows
+Ctrl + Mouse click selects multiple separate rows 
+
+Full screen option
 
 Enlarged font option
 
 Captions numbered from 100+ do not have strange indent
 
-Many bug fixes
+Various bug fixes
 
 
 
