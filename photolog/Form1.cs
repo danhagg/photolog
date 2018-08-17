@@ -109,23 +109,47 @@ namespace photolog
         }
 
 
+        // MENU - Save as
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DataSet dS = new DataSet();
+            System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
+            dS.Tables.Add(dT2);
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            //saveFileDialog.Filter = "XML files(.xml)|*.xml|all Files(*.*)|*.*";
+            saveFileDialog.Filter = "photolog file (*.photolog)|*.photolog";
+            saveFileDialog.DefaultExt = "photolog";
+            saveFileDialog.AddExtension = true;
+            //saveFileDialog.Title = "Save work as .XML file";
+            saveFileDialog.Title = "Save work as .photolog file";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                //dS.WriteXml(File.Open(saveFileDialog.FileName, FileMode.Create));
+                dS.WriteXml(saveFileDialog.FileName);
+                textBox6.Text = saveFileDialog.FileName;
+
+            }
+        }
+
+
         // MENU - Save
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var path = textBox6.Text;
+
+            string path = textBox6.Text;
 
             if (path == "")
             {
-                var dS = new DataSet();
-                var dT2 = GetDataTableFromDGV1(dataGridView1);
+                DataSet dS = new DataSet();
+                System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
+
                 dS.Tables.Add(dT2);
-                var saveFileDialog = new SaveFileDialog
-                {
-                    Filter = @"photolog file (*.photolog)|*.photolog",
-                    DefaultExt = "photolog",
-                    AddExtension = true,
-                    Title = @"Save work as .photolog file"
-                };
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "photolog file (*.photolog)|*.photolog";
+                saveFileDialog.DefaultExt = "photolog";
+                saveFileDialog.AddExtension = true;
+                saveFileDialog.Title = "Save work as .photolog file";
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     dS.WriteXml(saveFileDialog.FileName);
@@ -134,13 +158,14 @@ namespace photolog
             }
             else
             {
-                var dS = new DataSet();
-                var dT2 = GetDataTableFromDGV1(dataGridView1);
+                DataSet dS = new DataSet();
+                System.Data.DataTable dT2 = GetDataTableFromDGV1(dataGridView1);
                 dS.Tables.Add(dT2);
                 dS.WriteXml(textBox6.Text);
                 AutoClosingMessageBox.Show(textBox6.Text, "Saved", 3000);
             }
         }
+
 
         // Append
         private void addMultipleTempFilesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1392,6 +1417,7 @@ namespace photolog
         {
             dataGridView1.Columns[2].DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 14F);
         }
+
 
     }
 }
