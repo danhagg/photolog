@@ -28,10 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.dataGridView1 = new Form1.EditableDataGridView();
+            this.dataGridView1 = new photolog.Form1.EditableDataGridView();
+            this.file1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.imageColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.Caption = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label3 = new System.Windows.Forms.Label();
             this.folderBrowserDialog2 = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonDelete = new System.Windows.Forms.Button();
@@ -44,10 +48,10 @@
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeParentFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addMultipleTempFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,10 +64,6 @@
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.file1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.imageColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.Caption = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -94,6 +94,38 @@
             this.dataGridView1.Size = new System.Drawing.Size(627, 722);
             this.dataGridView1.TabIndex = 11;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            // 
+            // file1
+            // 
+            this.file1.HeaderText = "file1";
+            this.file1.Name = "file1";
+            this.file1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.file1.Visible = false;
+            this.file1.Width = 64;
+            // 
+            // imageColumn
+            // 
+            this.imageColumn.HeaderText = "DoubleClick to Enlarge";
+            this.imageColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
+            this.imageColumn.Name = "imageColumn";
+            this.imageColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.imageColumn.Width = 64;
+            // 
+            // Caption
+            // 
+            this.Caption.HeaderText = "                             Caption (max 220)";
+            this.Caption.MaxInputLength = 220;
+            this.Caption.Name = "Caption";
+            this.Caption.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Caption.Width = 502;
+            // 
+            // FilePath
+            // 
+            this.FilePath.HeaderText = "FilePath";
+            this.FilePath.Name = "FilePath";
+            this.FilePath.ReadOnly = true;
+            this.FilePath.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.FilePath.Visible = false;
             // 
             // label3
             // 
@@ -182,18 +214,18 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chart1.BorderlineColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.chart1.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea4.AxisX.MajorGrid.Enabled = false;
-            chartArea4.AxisX.MajorTickMark.Enabled = false;
-            chartArea4.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea4);
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisX.MajorTickMark.Enabled = false;
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Location = new System.Drawing.Point(645, 674);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Grayscale;
-            series4.ChartArea = "ChartArea1";
-            series4.IsValueShownAsLabel = true;
-            series4.Name = "Series1";
-            series4.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            this.chart1.Series.Add(series4);
+            series1.ChartArea = "ChartArea1";
+            series1.IsValueShownAsLabel = true;
+            series1.Name = "Series1";
+            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(580, 136);
             this.chart1.TabIndex = 52;
             this.chart1.Text = "chart1";
@@ -217,6 +249,13 @@
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
+            this.saveAsToolStripMenuItem.Text = "Save As";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
             // resumeToolStripMenuItem
             // 
             this.resumeToolStripMenuItem.Name = "resumeToolStripMenuItem";
@@ -237,13 +276,6 @@
             this.addMultipleTempFilesToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
             this.addMultipleTempFilesToolStripMenuItem.Text = "Append another photolog file";
             this.addMultipleTempFilesToolStripMenuItem.Click += new System.EventHandler(this.addMultipleTempFilesToolStripMenuItem_Click);
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
-            this.saveAsToolStripMenuItem.Text = "Save As";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -362,44 +394,11 @@
             this.label1.TabIndex = 60;
             this.label1.Text = "Total (MB)";
             // 
-            // file1
-            // 
-            this.file1.HeaderText = "file1";
-            this.file1.Name = "file1";
-            this.file1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.file1.Visible = false;
-            this.file1.Width = 64;
-            // 
-            // imageColumn
-            // 
-            this.imageColumn.HeaderText = "DoubleClick to Enlarge";
-            this.imageColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Stretch;
-            this.imageColumn.Name = "imageColumn";
-            this.imageColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.imageColumn.Width = 64;
-            // 
-            // Caption
-            // 
-            this.Caption.HeaderText = "                             Caption (max 220)";
-            this.Caption.MaxInputLength = 220;
-            this.Caption.Name = "Caption";
-            this.Caption.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.Caption.Width = 502;
-            // 
-            // FilePath
-            // 
-            this.FilePath.HeaderText = "FilePath";
-            this.FilePath.Name = "FilePath";
-            this.FilePath.ReadOnly = true;
-            this.FilePath.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.FilePath.Visible = false;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1233, 818);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox5);
@@ -433,7 +432,6 @@
 
         #endregion
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog2;
         private System.Windows.Forms.Button buttonDelete;
@@ -466,6 +464,7 @@
         private System.Windows.Forms.DataGridViewImageColumn imageColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn Caption;
         private System.Windows.Forms.DataGridViewTextBoxColumn FilePath;
+        private EditableDataGridView dataGridView1;
     }
 }
 

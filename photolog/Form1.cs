@@ -25,6 +25,8 @@ namespace photolog
             InitializeComponent();
 
             this.FormClosing += Form1_FormClosing;
+            this.SetStyle(ControlStyles.ResizeRedraw, true);
+            this.FormBorderStyle = FormBorderStyle.Sizable;
 
 
             //Create right click menu using contextmenustrip for right click move top bottom
@@ -51,6 +53,7 @@ namespace photolog
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
             this.dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
         }
+
 
 
         // Set Form listView and datGridView properties on load
