@@ -6,9 +6,14 @@ New in v1.4
 Shift + Mouse click selects multiple linked rows
 Ctrl + Mouse click selects multiple separate rows 
 
-Full screen option
+Full screen option. On going full-screen...
+The "Insert caption" textboxes stay the same width as they reflect the width of the caption in the Published word document.
+The Enlarged image box and the chart DO enlarge and take up that extra space.
 
-Enlarged font option
+When editing a caption... 
+Up, Down, Left, Right keys will now move the cursor around inside a caption textbox. Hit enter to get back out of the box.
+
+Enlarged font option (the font size is only changed for viewing in the app itself, the font in Word will publish at the standard size)
 
 Captions numbered from 100+ do not have strange indent
 

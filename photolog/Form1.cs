@@ -25,6 +25,8 @@ namespace photolog
             InitializeComponent();
 
             this.FormClosing += Form1_FormClosing;
+            this.SetStyle(ControlStyles.ResizeRedraw, true);
+            this.FormBorderStyle = FormBorderStyle.Sizable;
 
 
             //Create right click menu using contextmenustrip for right click move top bottom
@@ -51,6 +53,7 @@ namespace photolog
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
             this.dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
         }
+
 
 
         // Set Form listView and datGridView properties on load
@@ -519,6 +522,29 @@ namespace photolog
                 {
                     return;
                 }
+            }
+        }
+
+
+        public class EditableDataGridView : DataGridView
+        {
+            protected override bool ProcessDialogKey(Keys keyData)
+            {
+                Keys key = (keyData & Keys.KeyCode);
+                if ((key == Keys.Up || key == Keys.Down) && this.IsCurrentCellInEditMode)
+                {
+                    return false;
+                }
+                return base.ProcessDialogKey(keyData);
+            }
+
+            protected override bool ProcessDataGridViewKey(KeyEventArgs e)
+            {
+                if ((e.KeyCode == Keys.Up || e.KeyCode == Keys.Down) && this.IsCurrentCellInEditMode)
+                {
+                    return false;
+                }
+                return base.ProcessDataGridViewKey(e);
             }
         }
 
