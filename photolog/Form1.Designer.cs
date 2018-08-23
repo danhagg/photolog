@@ -302,20 +302,20 @@
             this.standardToolStripMenuItem,
             this.largeToolStripMenuItem});
             this.fontSizeToolStripMenuItem.Name = "fontSizeToolStripMenuItem";
-            this.fontSizeToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.fontSizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fontSizeToolStripMenuItem.Text = "font size";
             // 
             // standardToolStripMenuItem
             // 
             this.standardToolStripMenuItem.Name = "standardToolStripMenuItem";
-            this.standardToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.standardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.standardToolStripMenuItem.Text = "standard";
             this.standardToolStripMenuItem.Click += new System.EventHandler(this.standardToolStripMenuItem_Click);
             // 
             // largeToolStripMenuItem
             // 
             this.largeToolStripMenuItem.Name = "largeToolStripMenuItem";
-            this.largeToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.largeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.largeToolStripMenuItem.Text = "large";
             this.largeToolStripMenuItem.Click += new System.EventHandler(this.largeToolStripMenuItem_Click);
             // 
