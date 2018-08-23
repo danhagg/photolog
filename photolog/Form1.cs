@@ -311,6 +311,13 @@ namespace photolog
 
             // Make an array of all files being dragged in
             string[] fileNames = e.Data.GetData(DataFormats.FileDrop) as string[];
+
+            foreach (object o in fileNames)
+            {
+                Array.Sort(fileNames);
+                Console.WriteLine(o);
+            }
+
             if (fileNames != null && fileNames.Length != 0)
             {
                 // Make an array of all files in the dataGridView
@@ -1452,8 +1459,11 @@ namespace photolog
         }
 
 
+
     }
 }
+
+
 
 
 
